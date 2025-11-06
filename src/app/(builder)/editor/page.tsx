@@ -28,6 +28,10 @@ export default function EditorPage() {
 	const getCurrentPage = useEditorStore((state) => state.getCurrentPage);
 	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
 	const deleteNode = useEditorStore((state) => state.deleteNode);
+	const undo = useEditorStore((state) => state.undo);
+	const redo = useEditorStore((state) => state.redo);
+	const canUndo = useEditorStore((state) => state.canUndo);
+	const canRedo = useEditorStore((state) => state.canRedo);
 
 	// 드래그 앤 드롭 설정
 	const {
@@ -153,7 +157,7 @@ export default function EditorPage() {
 		}
 	}, [currentPageId, createPage, addNode, getCurrentPage]);
 
-	// 키보드 단축키 (Delete/Backspace로 컴포넌트 삭제)
+	// 키보드 단축키
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			// input, textarea 등에서는 무시
@@ -163,6 +167,26 @@ export default function EditorPage() {
 				target.tagName === "TEXTAREA" ||
 				target.isContentEditable
 			) {
+				return;
+			}
+
+			// Ctrl/Cmd 키 확인 (Mac: metaKey, Windows/Linux: ctrlKey)
+			const isMod = e.metaKey || e.ctrlKey;
+
+			// Undo: Ctrl+Z 또는 Cmd+Z
+			if (isMod && e.key === "z" && !e.shiftKey && canUndo) {
+				e.preventDefault();
+				undo();
+				return;
+			}
+
+			// Redo: Ctrl+Shift+Z, Cmd+Shift+Z, 또는 Ctrl+Y
+			if (
+				((isMod && e.key === "z" && e.shiftKey) || (e.ctrlKey && e.key === "y")) &&
+				canRedo
+			) {
+				e.preventDefault();
+				redo();
 				return;
 			}
 
@@ -177,7 +201,7 @@ export default function EditorPage() {
 
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, [selectedNodeId, deleteNode]);
+	}, [selectedNodeId, deleteNode, undo, redo, canUndo, canRedo]);
 
 	return (
 		<DndContext
