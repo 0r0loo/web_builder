@@ -3,7 +3,6 @@
 import { useEditorStore } from "../store/editorStore";
 import { findNodeById } from "@/lib/utils/tree";
 import { getComponent } from "@/features/builder-components/registry";
-import { useState } from "react";
 
 /**
  * 속성 패널
@@ -11,14 +10,17 @@ import { useState } from "react";
  */
 export function PropertiesPanel() {
 	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
-	const getCurrentPage = useEditorStore((state) => state.getCurrentPage);
 	const updateNode = useEditorStore((state) => state.updateNode);
 
-	const currentPage = getCurrentPage();
-	const selectedNode =
-		selectedNodeId && currentPage
-			? findNodeById(currentPage.root, selectedNodeId)
-			: null;
+	// selectedNode를 직접 selector로 가져와서 리액티브하게 만듦
+	const selectedNode = useEditorStore((state) => {
+		if (!selectedNodeId) return null;
+		const currentPage = state.pages.find(
+			(page) => page.id === state.currentPageId,
+		);
+		if (!currentPage) return null;
+		return findNodeById(currentPage.root, selectedNodeId);
+	});
 
 	if (!selectedNodeId || !selectedNode) {
 		return (
@@ -97,7 +99,7 @@ interface PropsEditorProps {
 }
 
 function PropsEditor({ node, updateNode }: PropsEditorProps) {
-	const handlePropChange = (key: string, value: any) => {
+	const handlePropChange = (key: string, value: string) => {
 		updateNode(node.id, {
 			props: {
 				...node.props,
