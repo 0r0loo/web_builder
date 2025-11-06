@@ -18,7 +18,7 @@ export function Canvas() {
 		id: currentPage?.root.id || "root",
 		data: {
 			type: "canvas-root",
-			accepts: ["component-library"],
+			accepts: ["component-library", "canvas-node"],
 		},
 	});
 

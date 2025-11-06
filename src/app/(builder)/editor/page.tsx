@@ -190,6 +190,13 @@ export default function EditorPage() {
 				{activeData?.type === "component-library" && (
 					<DragPreview componentType={activeData.componentType} />
 				)}
+				{activeData?.type === "canvas-node" && (
+					<div className="rounded-lg border-2 border-blue-500 bg-blue-50 p-4 shadow-lg dark:border-blue-400 dark:bg-blue-900">
+						<p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+							컴포넌트 이동 중...
+						</p>
+					</div>
+				)}
 			</DragOverlay>
 		</DndContext>
 	);

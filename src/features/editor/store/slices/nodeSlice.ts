@@ -160,27 +160,63 @@ export const createNodeSlice: StateCreator<
 	moveNode: (nodeId, targetParentId, index) => {
 		set((state) => {
 			const currentPage = state.pages.find((page) => page.id === state.currentPageId);
-			if (!currentPage) return state;
+			if (!currentPage) return;
 
-			// 1. 노드 찾기 및 제거
+			// 1. 노드 찾기 및 복사
 			const nodeToMove = findNodeById(currentPage.root, nodeId);
-			if (!nodeToMove) return state;
+			if (!nodeToMove) return;
 
-			const pageAfterRemoval = deleteNodeFromTree(currentPage, nodeId);
+			// Deep copy to preserve node data
+			const nodeCopy = JSON.parse(JSON.stringify(nodeToMove));
 
-			// 2. 새 위치에 추가
-			const updatedPage = addNodeToTree(
-				pageAfterRemoval,
-				targetParentId,
-				nodeToMove,
-				index,
-			);
-
-			return {
-				pages: state.pages.map((page) =>
-					page.id === state.currentPageId ? updatedPage : page,
-				),
+			// 2. 원래 위치에서 제거 (draft 직접 수정)
+			const removeFromParent = (current: ComponentNode): boolean => {
+				if (current.children) {
+					const idx = current.children.findIndex((child) => child.id === nodeId);
+					if (idx !== -1) {
+						current.children.splice(idx, 1);
+						return true;
+					}
+					for (const child of current.children) {
+						if (removeFromParent(child)) return true;
+					}
+				}
+				return false;
 			};
+
+			removeFromParent(currentPage.root);
+
+			// 3. 새 위치에 추가 (draft 직접 수정)
+			if (targetParentId === currentPage.root.id) {
+				if (!currentPage.root.children) currentPage.root.children = [];
+				if (index !== undefined) {
+					currentPage.root.children.splice(index, 0, nodeCopy);
+				} else {
+					currentPage.root.children.push(nodeCopy);
+				}
+			} else {
+				const addToParent = (current: ComponentNode): boolean => {
+					if (current.id === targetParentId) {
+						if (!current.children) current.children = [];
+						if (index !== undefined) {
+							current.children.splice(index, 0, nodeCopy);
+						} else {
+							current.children.push(nodeCopy);
+						}
+						return true;
+					}
+					if (current.children) {
+						for (const child of current.children) {
+							if (addToParent(child)) return true;
+						}
+					}
+					return false;
+				};
+
+				addToParent(currentPage.root);
+			}
+
+			currentPage.updatedAt = Date.now();
 		});
 
 		get().saveToHistory();

@@ -14,11 +14,11 @@
 - [x] ARCHITECTURE.md 작성
 - [x] 기술 스택 선정
 - [x] 핵심 라이브러리 설치
-- [ ] ROADMAP.md 작성 (현재)
-- [ ] 프로젝트 디렉토리 구조 생성
-- [ ] 기본 타입 정의
+- [x] ROADMAP.md 작성
+- [x] 프로젝트 디렉토리 구조 생성
+- [x] 기본 타입 정의
 
-## Phase 1: 기초 인프라 (3-5일)
+## Phase 1: 기초 인프라 (3-5일) ✅
 
 ### 목표
 기본적인 프로젝트 구조와 핵심 타입 시스템을 구축합니다.
@@ -26,10 +26,10 @@
 ### 작업 항목
 
 #### 1.1 타입 시스템 구축
-- [ ] `types/component.ts` - 컴포넌트 정의 타입
-- [ ] `types/page.ts` - 페이지 구조 타입
-- [ ] `types/editor.ts` - 에디터 상태 타입
-- [ ] `types/styles.ts` - 스타일 시스템 타입
+- [x] `types/component.ts` - 컴포넌트 정의 타입
+- [x] `types/page.ts` - 페이지 구조 타입
+- [x] `types/editor.ts` - 에디터 상태 타입
+- [x] `types/styles.ts` - 스타일 시스템 타입
 
 ```typescript
 // 예시: types/component.ts
@@ -50,26 +50,26 @@ export interface ComponentNode {
 ```
 
 #### 1.2 유틸리티 함수
-- [ ] `lib/utils/id.ts` - ID 생성 (nanoid)
-- [ ] `lib/utils/cn.ts` - 클래스명 병합 (clsx + tailwind-merge)
-- [ ] `lib/utils/tree.ts` - 트리 순회 및 조작 유틸리티
+- [x] `lib/utils/id.ts` - ID 생성 (nanoid)
+- [x] `lib/utils/cn.ts` - 클래스명 병합 (clsx + tailwind-merge)
+- [x] `lib/utils/tree.ts` - 트리 순회 및 조작 유틸리티
 
 #### 1.3 Zustand Store 초기 구조
-- [ ] `features/editor/store/editorStore.ts` - 기본 store 구조
-- [ ] 페이지 상태 관리 (CRUD)
-- [ ] 선택 상태 관리
-- [ ] 히스토리 관리 (undo/redo) 기본 구조
+- [x] `features/editor/store/editorStore.ts` - 기본 store 구조
+- [x] 페이지 상태 관리 (CRUD)
+- [x] 선택 상태 관리
+- [x] 히스토리 관리 (undo/redo) 기본 구조
 
 #### 1.4 라우팅 구조
-- [ ] `app/(builder)/page.tsx` - 에디터 메인 페이지
-- [ ] `app/(builder)/layout.tsx` - 에디터 레이아웃
-- [ ] 기본 UI 골격 (헤더, 사이드바, 캔버스 영역)
+- [x] `app/(builder)/page.tsx` - 에디터 메인 페이지
+- [x] `app/(builder)/layout.tsx` - 에디터 레이아웃
+- [x] 기본 UI 골격 (헤더, 사이드바, 캔버스 영역)
 
 **결과물**: 빈 캔버스가 있는 에디터 화면
 
 ---
 
-## Phase 2: 컴포넌트 레지스트리 시스템 (2-3일)
+## Phase 2: 컴포넌트 레지스트리 시스템 (2-3일) ✅
 
 ### 목표
 재사용 가능한 컴포넌트를 등록하고 관리하는 시스템을 구축합니다.
@@ -77,9 +77,9 @@ export interface ComponentNode {
 ### 작업 항목
 
 #### 2.1 레지스트리 코어
-- [ ] `features/builder-components/registry.ts` - 컴포넌트 레지스트리
-- [ ] 컴포넌트 등록/조회 API
-- [ ] 카테고리별 컴포넌트 분류
+- [x] `features/builder-components/registry.ts` - 컴포넌트 레지스트리
+- [x] 컴포넌트 등록/조회 API
+- [x] 카테고리별 컴포넌트 분류
 
 ```typescript
 // 예시
@@ -91,9 +91,9 @@ export const componentRegistry = {
 ```
 
 #### 2.2 기본 Primitive 컴포넌트 (3개)
-- [ ] `Text` - 단순 텍스트
-- [ ] `Button` - 버튼
-- [ ] `Container` - div 컨테이너 (flex/grid 지원)
+- [x] `Text` - 단순 텍스트
+- [x] `Button` - 버튼
+- [x] `Container` - div 컨테이너 (flex/grid 지원)
 
 각 컴포넌트에 필요한 것:
 - 컴포넌트 정의 (defaultProps, editableProps)
@@ -101,15 +101,15 @@ export const componentRegistry = {
 - 아이콘 (lucide-react)
 
 #### 2.3 컴포넌트 라이브러리 UI
-- [ ] `features/editor/components/ComponentLibrary.tsx`
-- [ ] 카테고리별 컴포넌트 목록
-- [ ] 드래그 가능한 컴포넌트 아이템
+- [x] `features/editor/components/ComponentLibrary.tsx`
+- [x] 카테고리별 컴포넌트 목록
+- [x] 드래그 가능한 컴포넌트 아이템
 
 **결과물**: 3개의 컴포넌트를 사이드바에서 볼 수 있음 (아직 드래그는 안 됨)
 
 ---
 
-## Phase 3: 기본 렌더러 (2-3일)
+## Phase 3: 기본 렌더러 (2-3일) ✅
 
 ### 목표
 JSON 데이터를 실제 React 컴포넌트로 렌더링합니다.
@@ -117,12 +117,12 @@ JSON 데이터를 실제 React 컴포넌트로 렌더링합니다.
 ### 작업 항목
 
 #### 3.1 렌더러 코어
-- [ ] `features/renderer/PageRenderer.tsx` - 재귀적 렌더러
-- [ ] `features/renderer/ComponentRenderer.tsx` - 개별 컴포넌트 렌더러
-- [ ] 스타일 적용 로직 (CSS-in-JS or inline styles)
+- [x] `features/renderer/PageRenderer.tsx` - 재귀적 렌더러
+- [x] `features/renderer/ComponentRenderer.tsx` - 개별 컴포넌트 렌더러
+- [x] 스타일 적용 로직 (CSS-in-JS or inline styles)
 
 ```typescript
-function PageRenderer({ node }: { node: ComponentNode }) {
+function PageRenderer({ node }: { node: ComponentNode}) {
   const Component = componentRegistry.get(node.type)
 
   return (
@@ -136,15 +136,15 @@ function PageRenderer({ node }: { node: ComponentNode }) {
 ```
 
 #### 3.2 캔버스 통합
-- [ ] `features/editor/components/Canvas.tsx`
-- [ ] 렌더러를 캔버스에 통합
-- [ ] 기본 샘플 페이지 데이터로 테스트
+- [x] `features/editor/components/Canvas.tsx`
+- [x] 렌더러를 캔버스에 통합
+- [x] 기본 샘플 페이지 데이터로 테스트
 
 **결과물**: JSON 데이터로 페이지가 렌더링되는 것을 볼 수 있음
 
 ---
 
-## Phase 4: 드래그 앤 드롭 (4-5일) 🎯 **핵심**
+## Phase 4: 드래그 앤 드롭 (4-5일) ✅ 🎯 **핵심**
 
 ### 목표
 컴포넌트를 드래그해서 캔버스에 배치할 수 있습니다.
@@ -152,29 +152,30 @@ function PageRenderer({ node }: { node: ComponentNode }) {
 ### 작업 항목
 
 #### 4.1 DnD Kit 기본 설정
-- [ ] `features/editor/hooks/useDragAndDrop.ts`
-- [ ] DndContext 설정
-- [ ] Sensors 설정 (마우스, 터치, 키보드)
+- [x] `features/editor/hooks/useDragAndDrop.ts`
+- [x] DndContext 설정
+- [x] Sensors 설정 (마우스, 터치, 키보드)
 
 #### 4.2 Draggable 컴포넌트
-- [ ] 컴포넌트 라이브러리의 아이템을 draggable로 만들기
-- [ ] 드래그 시 preview 표시
+- [x] 컴포넌트 라이브러리의 아이템을 draggable로 만들기
+- [x] 드래그 시 preview 표시
 
 #### 4.3 Droppable 캔버스
-- [ ] 캔버스를 droppable 영역으로 만들기
-- [ ] 드롭 시 새 컴포넌트 추가 로직
-- [ ] store에 상태 저장
+- [x] 캔버스를 droppable 영역으로 만들기
+- [x] 드롭 시 새 컴포넌트 추가 로직
+- [x] store에 상태 저장
+- [x] Immer 미들웨어 적용으로 리렌더링 문제 해결
 
 #### 4.4 중첩 드롭 (Nested Drop)
-- [ ] Container 내부에 드롭 가능하게
-- [ ] 드롭 영역 하이라이트
-- [ ] 드롭 위치 indicator
+- [x] Container 내부에 드롭 가능하게
+- [x] 드롭 영역 하이라이트
+- [x] 드롭 위치 indicator
 
 **결과물**: 컴포넌트를 드래그해서 캔버스에 배치하고 계층 구조를 만들 수 있음
 
 ---
 
-## Phase 5: 컴포넌트 선택 및 조작 (3-4일)
+## Phase 5: 컴포넌트 선택 및 조작 (3-4일) 🔄 **진행중**
 
 ### 목표
 캔버스의 컴포넌트를 선택하고 이동/삭제할 수 있습니다.
@@ -182,10 +183,10 @@ function PageRenderer({ node }: { node: ComponentNode }) {
 ### 작업 항목
 
 #### 5.1 선택 시스템
-- [ ] `features/editor/hooks/useSelection.ts`
-- [ ] 컴포넌트 클릭 시 선택
-- [ ] 선택된 컴포넌트 하이라이트 (outline)
-- [ ] ESC로 선택 해제
+- [x] 컴포넌트 클릭 시 선택 (selectionSlice 활용)
+- [x] 선택된 컴포넌트 하이라이트 (파란색 링)
+- [x] 이벤트 버블링 방지
+- [ ] ESC로 선택 해제 (키보드 이벤트 미구현)
 
 #### 5.2 컴포넌트 이동
 - [ ] 선택된 컴포넌트를 드래그로 이동
@@ -203,11 +204,11 @@ function PageRenderer({ node }: { node: ComponentNode }) {
 - [ ] 레이어 클릭 시 선택
 - [ ] 레이어 드래그로 순서 변경
 
-**결과물**: 컴포넌트를 선택하고 이동하고 삭제할 수 있음
+**결과물**: 컴포넌트를 선택하고 이동하고 삭제할 수 있음 (현재 선택만 완료)
 
 ---
 
-## Phase 6: 속성 편집 (3-4일)
+## Phase 6: 속성 편집 (3-4일) 🔄 **진행중**
 
 ### 목표
 선택된 컴포넌트의 속성을 편집할 수 있습니다.
@@ -215,22 +216,24 @@ function PageRenderer({ node }: { node: ComponentNode }) {
 ### 작업 항목
 
 #### 6.1 속성 패널 UI
-- [ ] `features/editor/components/PropertiesPanel.tsx`
-- [ ] 선택된 컴포넌트의 editableProps 표시
-- [ ] 타입별 입력 컨트롤 (text, number, color, select)
+- [x] `features/editor/components/PropertiesPanel.tsx` 완전 구현
+- [x] 선택된 컴포넌트의 Props 표시 및 편집
+- [x] 타입별 입력 컨트롤 (textarea, text, select)
+- [x] Zustand selector 방식으로 반응성 보장
 
 #### 6.2 스타일 편집 기본
-- [ ] 레이아웃 스타일 (width, height, margin, padding)
-- [ ] 색상 (background, text color)
-- [ ] 타이포그래피 (fontSize, fontWeight, textAlign)
-- [ ] 실시간 업데이트
+- [x] 타이포그래피 (fontSize, color)
+- [x] 색상 (backgroundColor)
+- [x] 레이아웃 스타일 (padding)
+- [x] 실시간 업데이트
+- [ ] width, height, margin (미구현)
 
 #### 6.3 컴포넌트별 속성
-- [ ] Text: content, fontSize, color
-- [ ] Button: text, variant, onClick (나중에)
-- [ ] Container: layout (flex/grid), gap, alignment
+- [x] Text: content (textarea 편집)
+- [x] Button: text, variant (primary/secondary/outline)
+- [ ] Container: layout (flex/grid), gap, alignment (미구현)
 
-**결과물**: 컴포넌트를 선택하면 속성을 편집할 수 있음
+**결과물**: 컴포넌트를 선택하면 기본 속성을 편집할 수 있음 (확장 예정)
 
 ---
 

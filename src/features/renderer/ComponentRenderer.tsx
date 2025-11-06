@@ -1,6 +1,7 @@
 "use client";
 
-import { useDroppable } from "@dnd-kit/core";
+import { useDroppable, useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import type { ComponentNode } from "@/types/component";
 import type { Breakpoint } from "@/types/editor";
 import { getComponent } from "@/features/builder-components/registry";
@@ -75,7 +76,7 @@ export function ComponentRenderer({
 
 	// Container인 경우 droppable 설정
 	const isContainer = metadata?.allowChildren;
-	const { setNodeRef, isOver } = useDroppable({
+	const { setNodeRef: setDroppableRef, isOver } = useDroppable({
 		id: node.id,
 		data: {
 			type: "canvas-container",
@@ -84,6 +85,30 @@ export function ComponentRenderer({
 		},
 		disabled: !isContainer,
 	});
+
+	// 컴포넌트를 draggable로 만들기 (선택된 경우만)
+	const {
+		attributes,
+		listeners,
+		setNodeRef: setDraggableRef,
+		transform,
+		isDragging,
+	} = useDraggable({
+		id: `draggable-${node.id}`,
+		data: {
+			type: "canvas-node",
+			nodeId: node.id,
+		},
+		disabled: !isSelected, // 선택된 컴포넌트만 드래그 가능
+	});
+
+	// droppable과 draggable ref 병합
+	const setNodeRef = (element: HTMLElement | null) => {
+		if (isContainer) {
+			setDroppableRef(element);
+		}
+		setDraggableRef(element);
+	};
 
 	// 클릭 이벤트 핸들러
 	const handleClick = (e: React.MouseEvent) => {
@@ -130,19 +155,28 @@ export function ComponentRenderer({
 	// 반응형 스타일 병합
 	const styles = mergeResponsiveStyles(node, breakpoint);
 
+	// 드래그 스타일 적용
+	const dragStyle = {
+		transform: CSS.Translate.toString(transform),
+		opacity: isDragging ? 0.5 : 1,
+	};
+
 	// 컴포넌트 렌더링
 	return (
 		<div
-			ref={isContainer ? setNodeRef : undefined}
+			ref={setNodeRef}
 			onClick={handleClick}
 			className={cn(
-				"relative cursor-pointer transition-all",
+				"relative transition-all",
+				isSelected ? "cursor-grab active:cursor-grabbing" : "cursor-pointer",
 				isContainer && isOver && "ring-2 ring-green-500 ring-inset",
 				isSelected && "ring-2 ring-blue-500 ring-offset-2",
+				isDragging && "z-50",
 			)}
-			style={styles}
+			style={{ ...styles, ...dragStyle }}
 			data-component-id={node.id}
 			data-component-type={node.type}
+			{...(isSelected ? { ...attributes, ...listeners } : {})}
 		>
 			<Component node={node}>{children}</Component>
 		</div>
