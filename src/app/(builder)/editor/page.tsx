@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { useEditorStore } from "@/features/editor/store/editorStore";
 import { EditorHeader } from "@/features/editor/components/EditorHeader";
 import { ComponentLibrary } from "@/features/editor/components/ComponentLibrary";
 import { Canvas } from "@/features/editor/components/Canvas";
 import { PropertiesPanel } from "@/features/editor/components/PropertiesPanel";
+import { DragPreview } from "@/features/editor/components/DragPreview";
 import { useDragAndDrop } from "@/features/editor/hooks/useDragAndDrop";
 
 /**
@@ -28,6 +29,7 @@ export default function EditorPage() {
 	// 드래그 앤 드롭 설정
 	const {
 		sensors,
+		activeData,
 		handleDragStart,
 		handleDragOver,
 		handleDragEnd,
@@ -182,6 +184,13 @@ export default function EditorPage() {
 					)}
 				</div>
 			</div>
+
+			{/* 드래그 오버레이 - 드래그 중인 항목의 프리뷰 */}
+			<DragOverlay>
+				{activeData?.type === "component-library" && (
+					<DragPreview componentType={activeData.componentType} />
+				)}
+			</DragOverlay>
 		</DndContext>
 	);
 }

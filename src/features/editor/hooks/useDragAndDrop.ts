@@ -25,6 +25,7 @@ export function useDragAndDrop() {
 	const moveNode = useEditorStore((state) => state.moveNode);
 
 	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+	const [activeData, setActiveData] = useState<any>(null);
 	const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
 
 	// 센서 설정 (마우스, 터치, 키보드)
@@ -48,6 +49,7 @@ export function useDragAndDrop() {
 	 */
 	const handleDragStart = (event: DragStartEvent) => {
 		setActiveId(event.active.id);
+		setActiveData(event.active.data.current);
 	};
 
 	/**
@@ -127,6 +129,7 @@ export function useDragAndDrop() {
 	return {
 		sensors,
 		activeId,
+		activeData,
 		overId,
 		handleDragStart,
 		handleDragOver,
