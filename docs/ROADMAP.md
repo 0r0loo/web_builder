@@ -175,7 +175,7 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 
 ---
 
-## Phase 5: 컴포넌트 선택 및 조작 (3-4일) 🔄 **진행중**
+## Phase 5: 컴포넌트 선택 및 조작 (3-4일) ✅ **완료**
 
 ### 목표
 캔버스의 컴포넌트를 선택하고 이동/삭제할 수 있습니다.
@@ -186,29 +186,29 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 - [x] 컴포넌트 클릭 시 선택 (selectionSlice 활용)
 - [x] 선택된 컴포넌트 하이라이트 (파란색 링)
 - [x] 이벤트 버블링 방지
-- [ ] ESC로 선택 해제 (키보드 이벤트 미구현)
+- [x] ESC로 선택 해제
 
 #### 5.2 컴포넌트 이동
-- [ ] 선택된 컴포넌트를 드래그로 이동
-- [ ] 다른 컨테이너로 이동 가능
-- [ ] Sortable 지원 (형제 간 순서 변경)
+- [x] 선택된 컴포넌트를 드래그로 이동
+- [x] 다른 컨테이너로 이동 가능
+- [x] Sortable 지원 (형제 간 순서 변경)
 
 #### 5.3 컴포넌트 삭제
-- [ ] Delete/Backspace 키로 삭제
-- [ ] 컨텍스트 메뉴에서 삭제
-- [ ] 삭제 확인 (자식이 있을 경우)
+- [x] Delete/Backspace 키로 삭제
+- [x] 컨텍스트 메뉴에서 삭제
+- [x] 삭제 확인 (자식이 있을 경우)
 
 #### 5.4 레이어 패널
-- [ ] `features/editor/components/LayersPanel.tsx`
-- [ ] 트리 구조로 페이지 표시
-- [ ] 레이어 클릭 시 선택
-- [ ] 레이어 드래그로 순서 변경
+- [x] `features/editor/components/LayersPanel.tsx`
+- [x] 트리 구조로 페이지 표시
+- [x] 레이어 클릭 시 선택
+- [x] 레이어 드래그로 순서 변경 (Sortable 통합으로 자동 지원)
 
-**결과물**: 컴포넌트를 선택하고 이동하고 삭제할 수 있음 (현재 선택만 완료)
+**결과물**: 컴포넌트를 선택하고 이동하고 삭제할 수 있음
 
 ---
 
-## Phase 6: 속성 편집 (3-4일) 🔄 **진행중**
+## Phase 6: 속성 편집 (3-4일) ✅ **완료**
 
 ### 목표
 선택된 컴포넌트의 속성을 편집할 수 있습니다.
@@ -216,24 +216,29 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 ### 작업 항목
 
 #### 6.1 속성 패널 UI
-- [x] `features/editor/components/PropertiesPanel.tsx` 완전 구현
+- [x] `features/editor/components/PropertiesPanel.tsx` 완전 구현 (720줄)
 - [x] 선택된 컴포넌트의 Props 표시 및 편집
 - [x] 타입별 입력 컨트롤 (textarea, text, select)
 - [x] Zustand selector 방식으로 반응성 보장
 
-#### 6.2 스타일 편집 기본
-- [x] 타이포그래피 (fontSize, color)
-- [x] 색상 (backgroundColor)
-- [x] 레이아웃 스타일 (padding)
+#### 6.2 스타일 편집 (7개 카테고리 완전 구현)
+- [x] Layout (display, flexDirection, justifyContent, alignItems, gap, grid)
+- [x] Spacing (margin, marginTop/Right/Bottom/Left, padding, paddingTop/Right/Bottom/Left)
+- [x] Typography (fontSize, fontWeight, lineHeight, textAlign, letterSpacing, color)
+- [x] Colors (color, backgroundColor, opacity)
+- [x] Border (border, borderWidth, borderStyle, borderColor, borderRadius)
+- [x] Size (width, height, minWidth, minHeight, maxWidth, maxHeight)
+- [x] Shadow (boxShadow, textShadow)
+- [x] 브레이크포인트별 스타일 편집 지원
 - [x] 실시간 업데이트
-- [ ] width, height, margin (미구현)
 
 #### 6.3 컴포넌트별 속성
 - [x] Text: content (textarea 편집)
 - [x] Button: text, variant (primary/secondary/outline)
-- [ ] Container: layout (flex/grid), gap, alignment (미구현)
+- [x] Container: layout (flex/grid는 스타일 편집에서 지원)
+- [x] Image: src, alt, objectFit (Phase 13에서 조기 구현)
 
-**결과물**: 컴포넌트를 선택하면 기본 속성을 편집할 수 있음 (확장 예정)
+**결과물**: 컴포넌트의 모든 속성과 스타일을 자유롭게 편집할 수 있음
 
 ---
 

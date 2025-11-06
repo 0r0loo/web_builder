@@ -27,6 +27,7 @@ export default function EditorPage() {
 	const addNode = useEditorStore((state) => state.addNode);
 	const getCurrentPage = useEditorStore((state) => state.getCurrentPage);
 	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
+	const clearSelection = useEditorStore((state) => state.clearSelection);
 	const deleteNode = useEditorStore((state) => state.deleteNode);
 	const undo = useEditorStore((state) => state.undo);
 	const redo = useEditorStore((state) => state.redo);
@@ -199,6 +200,15 @@ export default function EditorPage() {
 			// Ctrl/Cmd 키 확인 (Mac: metaKey, Windows/Linux: ctrlKey)
 			const isMod = e.metaKey || e.ctrlKey;
 
+			// ESC: 선택 해제
+			if (e.key === "Escape") {
+				if (selectedNodeId) {
+					e.preventDefault();
+					clearSelection();
+				}
+				return;
+			}
+
 			// Undo: Ctrl+Z 또는 Cmd+Z
 			if (isMod && e.key === "z" && !e.shiftKey && canUndo) {
 				e.preventDefault();
@@ -227,7 +237,7 @@ export default function EditorPage() {
 
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, [selectedNodeId, deleteNode, undo, redo, canUndo, canRedo]);
+	}, [selectedNodeId, clearSelection, deleteNode, undo, redo, canUndo, canRedo]);
 
 	return (
 		<DndContext

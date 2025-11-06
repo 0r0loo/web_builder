@@ -1,7 +1,9 @@
 "use client";
 
-import { useDroppable, useDraggable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import * as ContextMenu from "@radix-ui/react-context-menu";
 import type { ComponentNode } from "@/types/component";
 import type { Breakpoint } from "@/types/editor";
 import { getComponent } from "@/features/builder-components/registry";
@@ -12,6 +14,7 @@ import { Image } from "@/features/builder-components/primitives/Image";
 import { cn } from "@/lib/utils/cn";
 import { useEditorStore } from "@/features/editor/store/editorStore";
 import type { CSSProperties } from "react";
+import { Copy, Trash2, MoveUp, MoveDown } from "lucide-react";
 
 /**
  * 컴포넌트 타입별 렌더 컴포넌트 맵
@@ -74,6 +77,7 @@ export function ComponentRenderer({
 	// 선택 상태 관리
 	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
 	const selectNode = useEditorStore((state) => state.selectNode);
+	const deleteNode = useEditorStore((state) => state.deleteNode);
 	const isSelected = selectedNodeId === node.id;
 
 	// Container인 경우 droppable 설정
@@ -88,34 +92,41 @@ export function ComponentRenderer({
 		disabled: !isContainer,
 	});
 
-	// 컴포넌트를 draggable로 만들기 (선택된 경우만)
+	// Sortable 사용 (형제 간 순서 변경)
 	const {
 		attributes,
 		listeners,
-		setNodeRef: setDraggableRef,
+		setNodeRef: setSortableRef,
 		transform,
+		transition,
 		isDragging,
-	} = useDraggable({
-		id: `draggable-${node.id}`,
-		data: {
-			type: "canvas-node",
-			nodeId: node.id,
-		},
+	} = useSortable({
+		id: node.id,
 		disabled: !isSelected, // 선택된 컴포넌트만 드래그 가능
 	});
 
-	// droppable과 draggable ref 병합
+	// droppable과 sortable ref 병합
 	const setNodeRef = (element: HTMLElement | null) => {
 		if (isContainer) {
 			setDroppableRef(element);
 		}
-		setDraggableRef(element);
+		setSortableRef(element);
 	};
 
 	// 클릭 이벤트 핸들러
 	const handleClick = (e: React.MouseEvent) => {
 		e.stopPropagation(); // 이벤트 버블링 방지
 		selectNode(node.id);
+	};
+
+	// 컨텍스트 메뉴 핸들러
+	const handleDelete = () => {
+		deleteNode(node.id);
+	};
+
+	const handleDuplicate = () => {
+		// TODO: 복제 기능 구현 예정
+		console.log("복제 기능은 아직 구현되지 않았습니다.");
 	};
 
 	// 등록되지 않은 컴포넌트는 에러 표시
@@ -157,30 +168,60 @@ export function ComponentRenderer({
 	// 반응형 스타일 병합
 	const styles = mergeResponsiveStyles(node, breakpoint);
 
-	// 드래그 스타일 적용
+	// 드래그 스타일 적용 (Sortable용)
 	const dragStyle = {
-		transform: CSS.Translate.toString(transform),
+		transform: CSS.Transform.toString(transform),
+		transition,
 		opacity: isDragging ? 0.5 : 1,
 	};
 
 	// 컴포넌트 렌더링
 	return (
-		<div
-			ref={setNodeRef}
-			onClick={handleClick}
-			className={cn(
-				"relative transition-all",
-				isSelected ? "cursor-grab active:cursor-grabbing" : "cursor-pointer",
-				isContainer && isOver && "ring-2 ring-green-500 ring-inset",
-				isSelected && "ring-2 ring-blue-500 ring-offset-2",
-				isDragging && "z-50",
-			)}
-			style={{ ...styles, ...dragStyle }}
-			data-component-id={node.id}
-			data-component-type={node.type}
-			{...(isSelected ? { ...attributes, ...listeners } : {})}
-		>
-			<Component node={node}>{children}</Component>
-		</div>
+		<ContextMenu.Root>
+			<ContextMenu.Trigger asChild>
+				<div
+					ref={setNodeRef}
+					onClick={handleClick}
+					className={cn(
+						"relative transition-all",
+						isSelected ? "cursor-grab active:cursor-grabbing" : "cursor-pointer",
+						isContainer && isOver && "ring-2 ring-green-500 ring-inset",
+						isSelected && "ring-2 ring-blue-500 ring-offset-2",
+						isDragging && "z-50",
+					)}
+					style={{ ...styles, ...dragStyle }}
+					data-component-id={node.id}
+					data-component-type={node.type}
+					{...(isSelected ? { ...attributes, ...listeners } : {})}
+				>
+					<Component node={node}>{children}</Component>
+				</div>
+			</ContextMenu.Trigger>
+
+			<ContextMenu.Portal>
+				<ContextMenu.Content
+					className="min-w-[200px] rounded-lg border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900"
+					sideOffset={5}
+				>
+					<ContextMenu.Item
+						className="flex cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm outline-none hover:bg-zinc-100 dark:hover:bg-zinc-800"
+						onSelect={handleDuplicate}
+					>
+						<Copy className="h-4 w-4" />
+						<span>복제</span>
+					</ContextMenu.Item>
+
+					<ContextMenu.Separator className="my-1 h-px bg-zinc-200 dark:bg-zinc-800" />
+
+					<ContextMenu.Item
+						className="flex cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm text-red-600 outline-none hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
+						onSelect={handleDelete}
+					>
+						<Trash2 className="h-4 w-4" />
+						<span>삭제</span>
+					</ContextMenu.Item>
+				</ContextMenu.Content>
+			</ContextMenu.Portal>
+		</ContextMenu.Root>
 	);
 }

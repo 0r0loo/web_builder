@@ -18,6 +18,8 @@ export interface NodeSlice {
 	deleteNode: (nodeId: string) => void;
 	moveNode: (nodeId: string, targetParentId: string, index?: number) => void;
 	duplicateNode: (nodeId: string) => void;
+	reorderChildren: (parentId: string, oldIndex: number, newIndex: number) => void;
+	findNodeParent: (nodeId: string) => ComponentNode | null;
 }
 
 export const createNodeSlice: StateCreator<
@@ -272,5 +274,72 @@ export const createNodeSlice: StateCreator<
 		});
 
 		get().saveToHistory();
+	},
+
+	/**
+	 * 자식 노드들의 순서 변경 (Sortable용)
+	 */
+	reorderChildren: (parentId, oldIndex, newIndex) => {
+		set((state) => {
+			const currentPage = state.pages.find((page) => page.id === state.currentPageId);
+			if (!currentPage) return;
+
+			// 부모 노드 찾기
+			const reorderInParent = (current: ComponentNode): boolean => {
+				if (current.id === parentId) {
+					if (!current.children || current.children.length === 0) return false;
+
+					// 배열 순서 변경
+					const [removed] = current.children.splice(oldIndex, 1);
+					current.children.splice(newIndex, 0, removed);
+					return true;
+				}
+
+				if (current.children) {
+					for (const child of current.children) {
+						if (reorderInParent(child)) return true;
+					}
+				}
+
+				return false;
+			};
+
+			// 루트인 경우
+			if (parentId === currentPage.root.id) {
+				if (currentPage.root.children && currentPage.root.children.length > 0) {
+					const [removed] = currentPage.root.children.splice(oldIndex, 1);
+					currentPage.root.children.splice(newIndex, 0, removed);
+				}
+			} else {
+				reorderInParent(currentPage.root);
+			}
+
+			currentPage.updatedAt = Date.now();
+		});
+
+		get().saveToHistory();
+	},
+
+	/**
+	 * 노드의 부모 찾기
+	 */
+	findNodeParent: (nodeId) => {
+		const currentPage = get().getCurrentPage();
+		if (!currentPage) return null;
+
+		const findParent = (current: ComponentNode, targetId: string): ComponentNode | null => {
+			if (current.children) {
+				for (const child of current.children) {
+					if (child.id === targetId) {
+						return current;
+					}
+					const found = findParent(child, targetId);
+					if (found) return found;
+				}
+			}
+			return null;
+		};
+
+		return findParent(currentPage.root, nodeId);
 	},
 });

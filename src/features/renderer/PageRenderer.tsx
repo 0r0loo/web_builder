@@ -2,6 +2,7 @@ import type { ComponentNode } from "@/types/component";
 import type { Page } from "@/types/page";
 import type { Breakpoint } from "@/types/editor";
 import { ComponentRenderer } from "./ComponentRenderer";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 /**
  * 재귀적 노드 렌더러
@@ -15,11 +16,14 @@ function NodeRenderer({ node, breakpoint }: NodeRendererProps) {
 	// 자식 노드가 있으면 재귀적으로 렌더링
 	const children =
 		node.children && node.children.length > 0 ? (
-			<>
+			<SortableContext
+				items={node.children.map((child) => child.id)}
+				strategy={verticalListSortingStrategy}
+			>
 				{node.children.map((child) => (
 					<NodeRenderer key={child.id} node={child} breakpoint={breakpoint} />
 				))}
-			</>
+			</SortableContext>
 		) : null;
 
 	return (
