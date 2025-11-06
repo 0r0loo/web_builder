@@ -13,6 +13,10 @@ import {
 } from "./slices/viewportSlice";
 import { createHistorySlice, type HistorySlice } from "./slices/historySlice";
 import { createUISlice, type UISlice } from "./slices/uiSlice";
+import {
+	createPersistenceSlice,
+	type PersistenceSlice,
+} from "./slices/persistenceSlice";
 
 /**
  * 웹 빌더 에디터의 전역 상태 관리 스토어
@@ -24,6 +28,7 @@ import { createUISlice, type UISlice } from "./slices/uiSlice";
  * - viewportSlice: 브레이크포인트 및 에디터 모드
  * - historySlice: Undo/Redo 히스토리
  * - uiSlice: UI 패널 토글
+ * - persistenceSlice: 저장/불러오기
  *
  * Immer 미들웨어를 사용하여 불변성을 자동으로 처리합니다.
  */
@@ -35,6 +40,7 @@ export const useEditorStore = create<EditorStore>()(
 		...createViewportSlice(...a),
 		...createHistorySlice(...a),
 		...createUISlice(...a),
+		...createPersistenceSlice(...a),
 	})),
 );
 
@@ -48,4 +54,5 @@ export type {
 	ViewportSlice,
 	HistorySlice,
 	UISlice,
+	PersistenceSlice,
 };

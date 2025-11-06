@@ -37,6 +37,9 @@ export interface EditorState {
 	showComponentLibrary: boolean;
 	showLayersPanel: boolean;
 	showPropertiesPanel: boolean;
+
+	// 저장/불러오기
+	lastSaved: number | null;
 }
 
 /**
@@ -76,6 +79,13 @@ export interface EditorActions {
 	toggleComponentLibrary: () => void;
 	toggleLayersPanel: () => void;
 	togglePropertiesPanel: () => void;
+
+	// 저장/불러오기
+	saveToLocalStorage: () => void;
+	loadFromLocalStorage: () => boolean;
+	exportToJSON: () => string;
+	importFromJSON: (json: string) => boolean;
+	clearStorage: () => void;
 }
 
 /**

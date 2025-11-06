@@ -32,6 +32,11 @@ export default function EditorPage() {
 	const redo = useEditorStore((state) => state.redo);
 	const canUndo = useEditorStore((state) => state.canUndo);
 	const canRedo = useEditorStore((state) => state.canRedo);
+	const saveToLocalStorage = useEditorStore((state) => state.saveToLocalStorage);
+	const loadFromLocalStorage = useEditorStore(
+		(state) => state.loadFromLocalStorage,
+	);
+	const pages = useEditorStore((state) => state.pages);
 
 	// 드래그 앤 드롭 설정
 	const {
@@ -42,6 +47,14 @@ export default function EditorPage() {
 		handleDragEnd,
 		handleDragCancel,
 	} = useDragAndDrop();
+
+	// 초기 로드: LocalStorage에서 복원
+	useEffect(() => {
+		const loaded = loadFromLocalStorage();
+		if (loaded) {
+			console.log("프로젝트를 LocalStorage에서 불러왔습니다.");
+		}
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// 초기 페이지 생성 및 샘플 컴포넌트 추가
 	useEffect(() => {
@@ -156,6 +169,19 @@ export default function EditorPage() {
 			}, 100);
 		}
 	}, [currentPageId, createPage, addNode, getCurrentPage]);
+
+	// 자동 저장: pages 변경 시 1초 후 저장 (debounce)
+	useEffect(() => {
+		// 초기 로드 직후에는 저장하지 않음
+		if (pages.length === 0) return;
+
+		const timer = setTimeout(() => {
+			saveToLocalStorage();
+			console.log("자동 저장됨");
+		}, 1000);
+
+		return () => clearTimeout(timer);
+	}, [pages, saveToLocalStorage]);
 
 	// 키보드 단축키
 	useEffect(() => {
