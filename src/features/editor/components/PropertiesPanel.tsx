@@ -3,6 +3,7 @@
 import { useEditorStore } from "../store/editorStore";
 import { findNodeById } from "@/lib/utils/tree";
 import { getComponent } from "@/features/builder-components/registry";
+import { Monitor, Tablet, Smartphone } from "lucide-react";
 
 /**
  * 속성 패널
@@ -239,11 +240,31 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
 		});
 	};
 
+	// 브레이크포인트별 아이콘 및 라벨
+	const breakpointInfo = {
+		mobile: { icon: Smartphone, label: "모바일", size: "< 768px" },
+		tablet: { icon: Tablet, label: "태블릿", size: "768px - 1023px" },
+		desktop: { icon: Monitor, label: "데스크톱", size: ">= 1024px" },
+	}[currentBreakpoint];
+
+	const BreakpointIcon = breakpointInfo.icon;
+
 	return (
 		<div>
-			<h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
-				Styles ({currentBreakpoint})
-			</h3>
+			<div className="mb-3 flex items-center gap-2">
+				<h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
+					Styles
+				</h3>
+				<div className="flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-1 dark:bg-blue-900/30">
+					<BreakpointIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+					<span className="text-xs font-medium text-blue-700 dark:text-blue-300">
+						{breakpointInfo.label}
+					</span>
+					<span className="text-xs text-blue-600/70 dark:text-blue-400/70">
+						{breakpointInfo.size}
+					</span>
+				</div>
+			</div>
 
 			<div className="space-y-3">
 				{/* 폰트 크기 */}
