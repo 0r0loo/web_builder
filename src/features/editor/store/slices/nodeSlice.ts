@@ -84,7 +84,35 @@ export const createNodeSlice: StateCreator<
 			// 노드 찾아서 업데이트
 			const updateInTree = (current: ComponentNode): boolean => {
 				if (current.id === nodeId) {
-					Object.assign(current, updates);
+					// props와 styles는 deep merge 필요
+					if (updates.props) {
+						current.props = {
+							...current.props,
+							...updates.props,
+						};
+					}
+
+					if (updates.styles) {
+						current.styles = {
+							desktop: {
+								...current.styles.desktop,
+								...updates.styles.desktop,
+							},
+							tablet: {
+								...current.styles.tablet,
+								...updates.styles.tablet,
+							},
+							mobile: {
+								...current.styles.mobile,
+								...updates.styles.mobile,
+							},
+						};
+					}
+
+					// 나머지 속성은 직접 할당
+					const { props, styles, ...rest } = updates;
+					Object.assign(current, rest);
+
 					return true;
 				}
 
