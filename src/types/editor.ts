@@ -61,9 +61,12 @@ export interface EditorActions {
 	deleteNode: (nodeId: string) => void;
 	moveNode: (nodeId: string, targetParentId: string, index?: number) => void;
 	duplicateNode: (nodeId: string) => void;
+	reorderChildren: (parentId: string, oldIndex: number, newIndex: number) => void;
+	findNodeParent: (nodeId: string) => ComponentNode | null;
 
 	// 선택
 	selectNode: (nodeId: string | null) => void;
+	clearSelection: () => void;
 	hoverNode: (nodeId: string | null) => void;
 
 	// 뷰포트

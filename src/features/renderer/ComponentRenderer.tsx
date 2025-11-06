@@ -201,7 +201,6 @@ export function ComponentRenderer({
 			<ContextMenu.Portal>
 				<ContextMenu.Content
 					className="min-w-[200px] rounded-lg border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900"
-					sideOffset={5}
 				>
 					<ContextMenu.Item
 						className="flex cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm outline-none hover:bg-zinc-100 dark:hover:bg-zinc-800"

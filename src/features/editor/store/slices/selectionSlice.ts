@@ -8,6 +8,7 @@ export interface SelectionSlice {
 	selectedNodeId: string | null;
 	hoveredNodeId: string | null;
 	selectNode: (nodeId: string | null) => void;
+	clearSelection: () => void;
 	hoverNode: (nodeId: string | null) => void;
 }
 
@@ -25,6 +26,13 @@ export const createSelectionSlice: StateCreator<
 	 */
 	selectNode: (nodeId) => {
 		set({ selectedNodeId: nodeId });
+	},
+
+	/**
+	 * 선택 해제
+	 */
+	clearSelection: () => {
+		set({ selectedNodeId: null });
 	},
 
 	/**
