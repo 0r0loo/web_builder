@@ -1,5 +1,6 @@
 import type { Breakpoint, ComponentNode } from "./component";
 import type { Page } from "./page";
+import type { Project } from "@/lib/db/schema";
 
 /**
  * Breakpoint re-export
@@ -15,6 +16,11 @@ export type EditorMode = "edit" | "preview";
  * 에디터 상태
  */
 export interface EditorState {
+	// 프로젝트 (DB 연동)
+	currentProject: (Project & { pages: any[] }) | null;
+	isLoading: boolean;
+	error: string | null;
+
 	// 페이지
 	pages: Page[];
 	currentPageId: string | null;
@@ -46,7 +52,27 @@ export interface EditorState {
  * 에디터 액션
  */
 export interface EditorActions {
-	// 페이지 관리
+	// 프로젝트 관리 (DB 연동)
+	loadProject: (projectId: string) => Promise<void>;
+	createProject: (name: string, description?: string) => Promise<void>;
+	updateProject: (
+		id: string,
+		updates: Partial<{
+			name: string;
+			description: string;
+			thumbnail: string;
+			settings: any;
+		}>,
+	) => Promise<void>;
+	deleteProject: (id: string) => Promise<void>;
+	createPageInProject: (input: { name: string; slug?: string }) => Promise<void>;
+	updatePageInProject: (
+		pageId: string,
+		updates: Partial<{ name: string; slug: string; root: any; metadata: any }>,
+	) => Promise<void>;
+	deletePageInProject: (pageId: string) => Promise<void>;
+
+	// 페이지 관리 (로컬)
 	createPage: (input: { name: string; slug?: string }) => void;
 	deletePage: (pageId: string) => void;
 	setCurrentPage: (pageId: string) => void;

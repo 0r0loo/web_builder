@@ -17,11 +17,16 @@ import {
 	createPersistenceSlice,
 	type PersistenceSlice,
 } from "./slices/persistenceSlice";
+import {
+	createProjectSlice,
+	type ProjectSlice,
+} from "./slices/projectSlice";
 
 /**
  * 웹 빌더 에디터의 전역 상태 관리 스토어
  *
  * Zustand Slices 패턴으로 구성:
+ * - projectSlice: 프로젝트 관리 (DB 연동)
  * - pageSlice: 페이지 관리 (생성, 삭제, 선택)
  * - nodeSlice: 노드 관리 (추가, 업데이트, 삭제, 이동, 복제)
  * - selectionSlice: 선택 및 호버 상태
@@ -34,6 +39,7 @@ import {
  */
 export const useEditorStore = create<EditorStore>()(
 	immer((...a) => ({
+		...createProjectSlice(...a),
 		...createPageSlice(...a),
 		...createNodeSlice(...a),
 		...createSelectionSlice(...a),
@@ -48,6 +54,7 @@ export const useEditorStore = create<EditorStore>()(
  * 타입 export (다른 파일에서 import 용)
  */
 export type {
+	ProjectSlice,
 	PageSlice,
 	NodeSlice,
 	SelectionSlice,
