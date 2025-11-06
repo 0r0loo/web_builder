@@ -51,23 +51,21 @@ export function Canvas() {
 	return (
 		<div className="flex h-full items-start justify-center overflow-auto bg-zinc-50 p-8 dark:bg-zinc-900">
 			<div
-				ref={setNodeRef}
 				className={cn(
-					"min-h-[600px] bg-white shadow-lg transition-all duration-300 dark:bg-zinc-800",
+					"relative min-h-[600px] bg-white shadow-lg transition-all duration-300 dark:bg-zinc-800",
 					currentBreakpoint === "desktop" ? "w-full" : "mx-auto",
-					isOver && "ring-2 ring-blue-500 ring-offset-2",
 				)}
 				style={{
 					width: canvasWidth,
 					maxWidth: "100%",
 				}}
 			>
-				{hasChildren ? (
-					// 페이지 렌더링
-					<PageRenderer page={currentPage} breakpoint={currentBreakpoint} />
-				) : (
-					// 빈 캔버스 상태 (pointer-events-none으로 드롭 영역 방해하지 않음)
-					<div className="pointer-events-none flex h-full min-h-[600px] items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-700">
+				{/* 항상 PageRenderer를 렌더하여 root가 droppable이 되도록 함 */}
+				<PageRenderer page={currentPage} breakpoint={currentBreakpoint} />
+
+				{/* 빈 캔버스 상태 메시지 (overlay) */}
+				{!hasChildren && (
+					<div className="pointer-events-none absolute inset-0 flex items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-700">
 						<div className="text-center">
 							<p className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
 								여기에 컴포넌트를 드래그하세요
