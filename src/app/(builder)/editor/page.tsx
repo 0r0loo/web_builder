@@ -25,6 +25,8 @@ export default function EditorPage() {
 
 	const addNode = useEditorStore((state) => state.addNode);
 	const getCurrentPage = useEditorStore((state) => state.getCurrentPage);
+	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
+	const deleteNode = useEditorStore((state) => state.deleteNode);
 
 	// 드래그 앤 드롭 설정
 	const {
@@ -149,6 +151,32 @@ export default function EditorPage() {
 			}, 100);
 		}
 	}, [currentPageId, createPage, addNode, getCurrentPage]);
+
+	// 키보드 단축키 (Delete/Backspace로 컴포넌트 삭제)
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			// input, textarea 등에서는 무시
+			const target = e.target as HTMLElement;
+			if (
+				target.tagName === "INPUT" ||
+				target.tagName === "TEXTAREA" ||
+				target.isContentEditable
+			) {
+				return;
+			}
+
+			// Delete 또는 Backspace 키
+			if (e.key === "Delete" || e.key === "Backspace") {
+				if (selectedNodeId) {
+					e.preventDefault();
+					deleteNode(selectedNodeId);
+				}
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [selectedNodeId, deleteNode]);
 
 	return (
 		<DndContext

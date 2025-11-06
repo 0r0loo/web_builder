@@ -2,11 +2,7 @@ import type { StateCreator } from "zustand";
 import type { EditorStore } from "@/types/editor";
 import type { ComponentNode } from "@/types/component";
 import {
-	addNodeToTree,
-	updateNodeInTree,
-	deleteNodeFromTree,
 	findNodeById,
-	findParentNode,
 	duplicateNodeWithNewIds,
 } from "@/lib/utils/tree";
 
@@ -133,22 +129,35 @@ export const createNodeSlice: StateCreator<
 	},
 
 	/**
-	 * 노드 삭제
+	 * 노드 삭제 (Immer 스타일)
 	 */
 	deleteNode: (nodeId) => {
 		set((state) => {
 			const currentPage = state.pages.find((page) => page.id === state.currentPageId);
-			if (!currentPage) return state;
+			if (!currentPage) return;
 
-			const updatedPage = deleteNodeFromTree(currentPage, nodeId);
-
-			return {
-				pages: state.pages.map((page) =>
-					page.id === state.currentPageId ? updatedPage : page,
-				),
-				selectedNodeId:
-					state.selectedNodeId === nodeId ? null : state.selectedNodeId,
+			// 재귀적으로 노드 삭제 (draft 직접 수정)
+			const deleteFromParent = (current: ComponentNode): boolean => {
+				if (current.children) {
+					const idx = current.children.findIndex((child) => child.id === nodeId);
+					if (idx !== -1) {
+						current.children.splice(idx, 1);
+						return true;
+					}
+					for (const child of current.children) {
+						if (deleteFromParent(child)) return true;
+					}
+				}
+				return false;
 			};
+
+			deleteFromParent(currentPage.root);
+			currentPage.updatedAt = Date.now();
+
+			// 선택된 노드가 삭제되면 선택 해제
+			if (state.selectedNodeId === nodeId) {
+				state.selectedNodeId = null;
+			}
 		});
 
 		get().saveToHistory();
@@ -223,29 +232,43 @@ export const createNodeSlice: StateCreator<
 	},
 
 	/**
-	 * 노드 복제
+	 * 노드 복제 (Immer 스타일)
 	 */
 	duplicateNode: (nodeId) => {
 		set((state) => {
 			const currentPage = state.pages.find((page) => page.id === state.currentPageId);
-			if (!currentPage) return state;
+			if (!currentPage) return;
 
 			const nodeToDuplicate = findNodeById(currentPage.root, nodeId);
-			if (!nodeToDuplicate) return state;
+			if (!nodeToDuplicate) return;
 
 			const duplicatedNode = duplicateNodeWithNewIds(nodeToDuplicate);
 
-			// 부모 찾기
-			const parent = findParentNode(currentPage.root, nodeId);
-			const parentId = parent?.id || null;
-
-			const updatedPage = addNodeToTree(currentPage, parentId, duplicatedNode);
-
-			return {
-				pages: state.pages.map((page) =>
-					page.id === state.currentPageId ? updatedPage : page,
-				),
+			// 부모 찾아서 복제본 추가 (draft 직접 수정)
+			const addDuplicateToParent = (current: ComponentNode): boolean => {
+				if (current.children) {
+					const idx = current.children.findIndex((child) => child.id === nodeId);
+					if (idx !== -1) {
+						// 원본 바로 다음에 복제본 삽입
+						current.children.splice(idx + 1, 0, duplicatedNode);
+						return true;
+					}
+					for (const child of current.children) {
+						if (addDuplicateToParent(child)) return true;
+					}
+				}
+				return false;
 			};
+
+			// 루트의 직접 자식인 경우
+			if (currentPage.root.children?.some((child) => child.id === nodeId)) {
+				const idx = currentPage.root.children.findIndex((child) => child.id === nodeId);
+				currentPage.root.children.splice(idx + 1, 0, duplicatedNode);
+			} else {
+				addDuplicateToParent(currentPage.root);
+			}
+
+			currentPage.updatedAt = Date.now();
 		});
 
 		get().saveToHistory();

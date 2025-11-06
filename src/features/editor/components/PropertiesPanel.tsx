@@ -11,6 +11,7 @@ import { getComponent } from "@/features/builder-components/registry";
 export function PropertiesPanel() {
 	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
 	const updateNode = useEditorStore((state) => state.updateNode);
+	const deleteNode = useEditorStore((state) => state.deleteNode);
 
 	// selectedNode를 직접 selector로 가져와서 리액티브하게 만듦
 	const selectedNode = useEditorStore((state) => {
@@ -21,6 +22,22 @@ export function PropertiesPanel() {
 		if (!currentPage) return null;
 		return findNodeById(currentPage.root, selectedNodeId);
 	});
+
+	// 삭제 핸들러
+	const handleDelete = () => {
+		if (!selectedNode) return;
+
+		// 자식 노드가 있으면 확인
+		const childrenCount = selectedNode.children?.length || 0;
+		if (childrenCount > 0) {
+			const confirmed = window.confirm(
+				`이 컴포넌트는 ${childrenCount}개의 자식 컴포넌트를 포함하고 있습니다.\n모두 삭제하시겠습니까?`,
+			);
+			if (!confirmed) return;
+		}
+
+		deleteNode(selectedNode.id);
+	};
 
 	if (!selectedNodeId || !selectedNode) {
 		return (
@@ -49,12 +66,24 @@ export function PropertiesPanel() {
 	return (
 		<div className="flex h-full flex-col">
 			<div className="border-b border-zinc-200 p-4 dark:border-zinc-800">
-				<h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-					속성
-				</h2>
-				<p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-					{metadata?.label || selectedNode.type}
-				</p>
+				<div className="flex items-start justify-between">
+					<div className="flex-1">
+						<h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+							속성
+						</h2>
+						<p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+							{metadata?.label || selectedNode.type}
+						</p>
+					</div>
+					<button
+						type="button"
+						onClick={handleDelete}
+						className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-700 dark:hover:bg-red-800"
+						title="Delete (Del)"
+					>
+						삭제
+					</button>
+				</div>
 			</div>
 
 			<div className="flex-1 overflow-y-auto p-4">
