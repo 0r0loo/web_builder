@@ -2,6 +2,11 @@ import type { Breakpoint, ComponentNode } from "./component";
 import type { Page } from "./page";
 
 /**
+ * Breakpoint re-export
+ */
+export type { Breakpoint } from "./component";
+
+/**
  * 에디터 모드
  */
 export type EditorMode = "edit" | "preview";

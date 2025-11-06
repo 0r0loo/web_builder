@@ -2,6 +2,7 @@
 
 import { useEditorStore } from "../store/editorStore";
 import { cn } from "@/lib/utils/cn";
+import { PageRenderer } from "@/features/renderer/PageRenderer";
 
 /**
  * 에디터 캔버스
@@ -33,6 +34,10 @@ export function Canvas() {
 		desktop: "100%",
 	}[currentBreakpoint];
 
+	// 페이지에 자식 컴포넌트가 있는지 확인
+	const hasChildren =
+		currentPage.root.children && currentPage.root.children.length > 0;
+
 	return (
 		<div className="flex h-full items-start justify-center overflow-auto bg-zinc-50 p-8 dark:bg-zinc-900">
 			<div
@@ -45,17 +50,22 @@ export function Canvas() {
 					maxWidth: "100%",
 				}}
 			>
-				{/* 빈 캔버스 상태 */}
-				<div className="flex h-full min-h-[600px] items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-700">
-					<div className="text-center">
-						<p className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
-							여기에 컴포넌트를 드래그하세요
-						</p>
-						<p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-							좌측 사이드바에서 컴포넌트를 선택하여 시작하세요
-						</p>
+				{hasChildren ? (
+					// 페이지 렌더링
+					<PageRenderer page={currentPage} breakpoint={currentBreakpoint} />
+				) : (
+					// 빈 캔버스 상태
+					<div className="flex h-full min-h-[600px] items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-700">
+						<div className="text-center">
+							<p className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
+								여기에 컴포넌트를 드래그하세요
+							</p>
+							<p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+								좌측 사이드바에서 컴포넌트를 선택하여 시작하세요
+							</p>
+						</div>
 					</div>
-				</div>
+				)}
 			</div>
 		</div>
 	);
