@@ -1,38 +1,53 @@
 "use client";
 
-import { Box, Type, Image as ImageIcon, MousePointerClick } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+	getComponentsGroupedByCategory,
+	getRegistrySize,
+} from "@/features/builder-components/registry";
+import { registerPrimitiveComponents } from "@/features/builder-components/primitives";
+import type {
+	ComponentMetadata,
+	ComponentCategory,
+} from "@/features/builder-components/types";
+
+/**
+ * 카테고리 한글 라벨
+ */
+const categoryLabels: Record<ComponentCategory, string> = {
+	layout: "레이아웃",
+	typography: "타이포그래피",
+	form: "폼 요소",
+	media: "미디어",
+	navigation: "네비게이션",
+};
 
 /**
  * 컴포넌트 라이브러리 사이드바
  * 드래그 가능한 컴포넌트 목록 표시
  */
 export function ComponentLibrary() {
-	const components = [
-		{
-			id: "container",
-			label: "컨테이너",
-			icon: Box,
-			category: "레이아웃",
-		},
-		{
-			id: "text",
-			label: "텍스트",
-			icon: Type,
-			category: "콘텐츠",
-		},
-		{
-			id: "button",
-			label: "버튼",
-			icon: MousePointerClick,
-			category: "콘텐츠",
-		},
-		{
-			id: "image",
-			label: "이미지",
-			icon: ImageIcon,
-			category: "미디어",
-		},
-	];
+	const [componentsGrouped, setComponentsGrouped] = useState<
+		Record<ComponentCategory, ComponentMetadata[]>
+	>({
+		layout: [],
+		typography: [],
+		form: [],
+		media: [],
+		navigation: [],
+	});
+
+	// 컴포넌트 레지스트리 초기화 및 로드
+	useEffect(() => {
+		// 프리미티브 컴포넌트 등록
+		if (getRegistrySize() === 0) {
+			registerPrimitiveComponents();
+		}
+
+		// 카테고리별로 그룹핑된 컴포넌트 가져오기
+		const grouped = getComponentsGroupedByCategory();
+		setComponentsGrouped(grouped);
+	}, []);
 
 	return (
 		<div className="flex h-full flex-col">
@@ -43,29 +58,40 @@ export function ComponentLibrary() {
 			</div>
 
 			<div className="flex-1 overflow-y-auto p-3">
-				<div className="space-y-1">
-					{components.map((component) => {
-						const Icon = component.icon;
-						return (
-							<button
-								key={component.id}
-								type="button"
-								className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-750"
-							>
-								<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700">
-									<Icon className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
+				<div className="space-y-4">
+					{(Object.entries(componentsGrouped) as [ComponentCategory, ComponentMetadata[]][])
+						.filter(([_, components]) => components.length > 0)
+						.map(([category, components]) => (
+							<div key={category}>
+								<h3 className="mb-2 px-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+									{categoryLabels[category]}
+								</h3>
+								<div className="space-y-1">
+									{components.map((component) => {
+										const Icon = component.icon;
+										return (
+											<button
+												key={component.type}
+												type="button"
+												className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-750"
+											>
+												<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700">
+													<Icon className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
+												</div>
+												<div className="flex-1">
+													<div className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+														{component.label}
+													</div>
+													<div className="text-xs text-zinc-500 dark:text-zinc-400">
+														{component.description}
+													</div>
+												</div>
+											</button>
+										);
+									})}
 								</div>
-								<div className="flex-1">
-									<div className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-										{component.label}
-									</div>
-									<div className="text-xs text-zinc-500 dark:text-zinc-400">
-										{component.category}
-									</div>
-								</div>
-							</button>
-						);
-					})}
+							</div>
+						))}
 				</div>
 			</div>
 
