@@ -2,49 +2,49 @@ import type { Breakpoint, ComponentNode } from "./component";
 import type { Page } from "./page";
 
 /**
- * Editor mode
+ * 에디터 모드
  */
 export type EditorMode = "edit" | "preview";
 
 /**
- * Editor state
+ * 에디터 상태
  */
 export interface EditorState {
-	// Pages
+	// 페이지
 	pages: Page[];
 	currentPageId: string | null;
 
-	// Selection
+	// 선택
 	selectedNodeId: string | null;
 	hoveredNodeId: string | null;
 
-	// Viewport
+	// 뷰포트
 	currentBreakpoint: Breakpoint;
 	editorMode: EditorMode;
 
-	// History
+	// 히스토리
 	history: Page[];
 	historyIndex: number;
 	canUndo: boolean;
 	canRedo: boolean;
 
-	// UI State
+	// UI 상태
 	showComponentLibrary: boolean;
 	showLayersPanel: boolean;
 	showPropertiesPanel: boolean;
 }
 
 /**
- * Editor actions
+ * 에디터 액션
  */
 export interface EditorActions {
-	// Page management
+	// 페이지 관리
 	createPage: (input: { name: string; slug?: string }) => void;
 	deletePage: (pageId: string) => void;
 	setCurrentPage: (pageId: string) => void;
 	getCurrentPage: () => Page | null;
 
-	// Node management
+	// 노드 관리
 	addNode: (parentId: string | null, node: ComponentNode) => void;
 	updateNode: (
 		nodeId: string,
@@ -54,15 +54,15 @@ export interface EditorActions {
 	moveNode: (nodeId: string, targetParentId: string, index?: number) => void;
 	duplicateNode: (nodeId: string) => void;
 
-	// Selection
+	// 선택
 	selectNode: (nodeId: string | null) => void;
 	hoverNode: (nodeId: string | null) => void;
 
-	// Viewport
+	// 뷰포트
 	setBreakpoint: (breakpoint: Breakpoint) => void;
 	setEditorMode: (mode: EditorMode) => void;
 
-	// History
+	// 히스토리
 	undo: () => void;
 	redo: () => void;
 	saveToHistory: () => void;
@@ -74,6 +74,6 @@ export interface EditorActions {
 }
 
 /**
- * Complete editor store
+ * 완전한 에디터 스토어
  */
 export type EditorStore = EditorState & EditorActions;

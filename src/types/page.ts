@@ -1,7 +1,7 @@
 import type { ComponentNode } from "./component";
 
 /**
- * Page metadata for SEO and sharing
+ * SEO 및 공유를 위한 페이지 메타데이터
  */
 export interface PageMetadata {
 	title: string;
@@ -11,7 +11,7 @@ export interface PageMetadata {
 }
 
 /**
- * Complete page structure
+ * 완전한 페이지 구조
  */
 export interface Page {
 	id: string;
@@ -24,7 +24,7 @@ export interface Page {
 }
 
 /**
- * Page creation input
+ * 페이지 생성 입력 타입
  */
 export interface CreatePageInput {
 	name: string;
