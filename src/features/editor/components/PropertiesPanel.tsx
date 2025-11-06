@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useEditorStore } from "../store/editorStore";
 import { findNodeById } from "@/lib/utils/tree";
 import { getComponent } from "@/features/builder-components/registry";
-import { Monitor, Tablet, Smartphone } from "lucide-react";
+import { Monitor, Tablet, Smartphone, ChevronDown } from "lucide-react";
 
 /**
  * 속성 패널
@@ -229,6 +230,24 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
 	const currentBreakpoint = useEditorStore((state) => state.currentBreakpoint);
 	const currentStyles = node.styles[currentBreakpoint] || {};
 
+	// 카테고리별 펼침/접힘 상태
+	const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
+		layout: true,
+		spacing: false,
+		typography: false,
+		colors: false,
+		border: false,
+		size: false,
+		shadow: false,
+	});
+
+	const toggleCategory = (category: string) => {
+		setOpenCategories((prev) => ({
+			...prev,
+			[category]: !prev[category],
+		}));
+	};
+
 	const handleStyleChange = (key: string, value: string) => {
 		updateNode(node.id, {
 			styles: {
@@ -266,81 +285,378 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
 				</div>
 			</div>
 
-			<div className="space-y-3">
-				{/* 폰트 크기 */}
-				<div>
-					<label
-						htmlFor="style-fontSize"
-						className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-					>
-						Font Size
-					</label>
-					<input
-						id="style-fontSize"
-						type="text"
-						value={currentStyles.fontSize || ""}
-						onChange={(e) => handleStyleChange("fontSize", e.target.value)}
-						placeholder="16px"
-						className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+			<div className="space-y-2">
+				{/* Layout 카테고리 */}
+				<StyleCategory
+					title="Layout"
+					isOpen={openCategories.layout}
+					onToggle={() => toggleCategory("layout")}
+				>
+					<StyleInput
+						label="Display"
+						value={currentStyles.display}
+						onChange={(v) => handleStyleChange("display", v)}
+						placeholder="flex"
 					/>
-				</div>
+					<StyleInput
+						label="Flex Direction"
+						value={currentStyles.flexDirection}
+						onChange={(v) => handleStyleChange("flexDirection", v)}
+						placeholder="row"
+					/>
+					<StyleInput
+						label="Justify Content"
+						value={currentStyles.justifyContent}
+						onChange={(v) => handleStyleChange("justifyContent", v)}
+						placeholder="flex-start"
+					/>
+					<StyleInput
+						label="Align Items"
+						value={currentStyles.alignItems}
+						onChange={(v) => handleStyleChange("alignItems", v)}
+						placeholder="flex-start"
+					/>
+					<StyleInput
+						label="Gap"
+						value={currentStyles.gap}
+						onChange={(v) => handleStyleChange("gap", v)}
+						placeholder="16px"
+					/>
+					<StyleInput
+						label="Grid Template Columns"
+						value={currentStyles.gridTemplateColumns}
+						onChange={(v) => handleStyleChange("gridTemplateColumns", v)}
+						placeholder="repeat(3, 1fr)"
+					/>
+					<StyleInput
+						label="Grid Template Rows"
+						value={currentStyles.gridTemplateRows}
+						onChange={(v) => handleStyleChange("gridTemplateRows", v)}
+						placeholder="auto"
+					/>
+				</StyleCategory>
 
-				{/* 색상 */}
-				<div>
-					<label
-						htmlFor="style-color"
-						className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-					>
-						Color
-					</label>
-					<input
-						id="style-color"
-						type="text"
-						value={currentStyles.color || ""}
-						onChange={(e) => handleStyleChange("color", e.target.value)}
+				{/* Spacing 카테고리 */}
+				<StyleCategory
+					title="Spacing"
+					isOpen={openCategories.spacing}
+					onToggle={() => toggleCategory("spacing")}
+				>
+					<StyleInput
+						label="Margin"
+						value={currentStyles.margin}
+						onChange={(v) => handleStyleChange("margin", v)}
+						placeholder="0"
+					/>
+					<div className="grid grid-cols-2 gap-2">
+						<StyleInput
+							label="Margin Top"
+							value={currentStyles.marginTop}
+							onChange={(v) => handleStyleChange("marginTop", v)}
+							placeholder="0"
+						/>
+						<StyleInput
+							label="Margin Right"
+							value={currentStyles.marginRight}
+							onChange={(v) => handleStyleChange("marginRight", v)}
+							placeholder="0"
+						/>
+						<StyleInput
+							label="Margin Bottom"
+							value={currentStyles.marginBottom}
+							onChange={(v) => handleStyleChange("marginBottom", v)}
+							placeholder="0"
+						/>
+						<StyleInput
+							label="Margin Left"
+							value={currentStyles.marginLeft}
+							onChange={(v) => handleStyleChange("marginLeft", v)}
+							placeholder="0"
+						/>
+					</div>
+					<StyleInput
+						label="Padding"
+						value={currentStyles.padding}
+						onChange={(v) => handleStyleChange("padding", v)}
+						placeholder="0"
+					/>
+					<div className="grid grid-cols-2 gap-2">
+						<StyleInput
+							label="Padding Top"
+							value={currentStyles.paddingTop}
+							onChange={(v) => handleStyleChange("paddingTop", v)}
+							placeholder="0"
+						/>
+						<StyleInput
+							label="Padding Right"
+							value={currentStyles.paddingRight}
+							onChange={(v) => handleStyleChange("paddingRight", v)}
+							placeholder="0"
+						/>
+						<StyleInput
+							label="Padding Bottom"
+							value={currentStyles.paddingBottom}
+							onChange={(v) => handleStyleChange("paddingBottom", v)}
+							placeholder="0"
+						/>
+						<StyleInput
+							label="Padding Left"
+							value={currentStyles.paddingLeft}
+							onChange={(v) => handleStyleChange("paddingLeft", v)}
+							placeholder="0"
+						/>
+					</div>
+				</StyleCategory>
+
+				{/* Typography 카테고리 */}
+				<StyleCategory
+					title="Typography"
+					isOpen={openCategories.typography}
+					onToggle={() => toggleCategory("typography")}
+				>
+					<StyleInput
+						label="Font Family"
+						value={currentStyles.fontFamily}
+						onChange={(v) => handleStyleChange("fontFamily", v)}
+						placeholder="inherit"
+					/>
+					<StyleInput
+						label="Font Size"
+						value={currentStyles.fontSize}
+						onChange={(v) => handleStyleChange("fontSize", v)}
+						placeholder="16px"
+					/>
+					<StyleInput
+						label="Font Weight"
+						value={currentStyles.fontWeight}
+						onChange={(v) => handleStyleChange("fontWeight", v)}
+						placeholder="400"
+					/>
+					<StyleInput
+						label="Line Height"
+						value={currentStyles.lineHeight}
+						onChange={(v) => handleStyleChange("lineHeight", v)}
+						placeholder="1.5"
+					/>
+					<StyleInput
+						label="Text Align"
+						value={currentStyles.textAlign}
+						onChange={(v) => handleStyleChange("textAlign", v)}
+						placeholder="left"
+					/>
+					<StyleInput
+						label="Text Decoration"
+						value={currentStyles.textDecoration}
+						onChange={(v) => handleStyleChange("textDecoration", v)}
+						placeholder="none"
+					/>
+					<StyleInput
+						label="Letter Spacing"
+						value={currentStyles.letterSpacing}
+						onChange={(v) => handleStyleChange("letterSpacing", v)}
+						placeholder="normal"
+					/>
+				</StyleCategory>
+
+				{/* Colors 카테고리 */}
+				<StyleCategory
+					title="Colors"
+					isOpen={openCategories.colors}
+					onToggle={() => toggleCategory("colors")}
+				>
+					<StyleInput
+						label="Color"
+						value={currentStyles.color}
+						onChange={(v) => handleStyleChange("color", v)}
 						placeholder="#000000"
-						className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 					/>
-				</div>
-
-				{/* 배경색 */}
-				<div>
-					<label
-						htmlFor="style-backgroundColor"
-						className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-					>
-						Background Color
-					</label>
-					<input
-						id="style-backgroundColor"
-						type="text"
-						value={currentStyles.backgroundColor || ""}
-						onChange={(e) =>
-							handleStyleChange("backgroundColor", e.target.value)
-						}
+					<StyleInput
+						label="Background Color"
+						value={currentStyles.backgroundColor}
+						onChange={(v) => handleStyleChange("backgroundColor", v)}
 						placeholder="transparent"
-						className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 					/>
-				</div>
+					<StyleInput
+						label="Opacity"
+						value={currentStyles.opacity}
+						onChange={(v) => handleStyleChange("opacity", v)}
+						placeholder="1"
+					/>
+				</StyleCategory>
 
-				{/* 패딩 */}
-				<div>
-					<label
-						htmlFor="style-padding"
-						className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-					>
-						Padding
-					</label>
-					<input
-						id="style-padding"
-						type="text"
-						value={currentStyles.padding || ""}
-						onChange={(e) => handleStyleChange("padding", e.target.value)}
-						placeholder="16px"
-						className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+				{/* Border 카테고리 */}
+				<StyleCategory
+					title="Border"
+					isOpen={openCategories.border}
+					onToggle={() => toggleCategory("border")}
+				>
+					<StyleInput
+						label="Border"
+						value={currentStyles.border}
+						onChange={(v) => handleStyleChange("border", v)}
+						placeholder="1px solid #000"
 					/>
-				</div>
+					<StyleInput
+						label="Border Width"
+						value={currentStyles.borderWidth}
+						onChange={(v) => handleStyleChange("borderWidth", v)}
+						placeholder="1px"
+					/>
+					<StyleInput
+						label="Border Style"
+						value={currentStyles.borderStyle}
+						onChange={(v) => handleStyleChange("borderStyle", v)}
+						placeholder="solid"
+					/>
+					<StyleInput
+						label="Border Color"
+						value={currentStyles.borderColor}
+						onChange={(v) => handleStyleChange("borderColor", v)}
+						placeholder="#000000"
+					/>
+					<StyleInput
+						label="Border Radius"
+						value={currentStyles.borderRadius}
+						onChange={(v) => handleStyleChange("borderRadius", v)}
+						placeholder="0"
+					/>
+				</StyleCategory>
+
+				{/* Size 카테고리 */}
+				<StyleCategory
+					title="Size"
+					isOpen={openCategories.size}
+					onToggle={() => toggleCategory("size")}
+				>
+					<StyleInput
+						label="Width"
+						value={currentStyles.width}
+						onChange={(v) => handleStyleChange("width", v)}
+						placeholder="auto"
+					/>
+					<StyleInput
+						label="Height"
+						value={currentStyles.height}
+						onChange={(v) => handleStyleChange("height", v)}
+						placeholder="auto"
+					/>
+					<StyleInput
+						label="Min Width"
+						value={currentStyles.minWidth}
+						onChange={(v) => handleStyleChange("minWidth", v)}
+						placeholder="0"
+					/>
+					<StyleInput
+						label="Min Height"
+						value={currentStyles.minHeight}
+						onChange={(v) => handleStyleChange("minHeight", v)}
+						placeholder="0"
+					/>
+					<StyleInput
+						label="Max Width"
+						value={currentStyles.maxWidth}
+						onChange={(v) => handleStyleChange("maxWidth", v)}
+						placeholder="none"
+					/>
+					<StyleInput
+						label="Max Height"
+						value={currentStyles.maxHeight}
+						onChange={(v) => handleStyleChange("maxHeight", v)}
+						placeholder="none"
+					/>
+				</StyleCategory>
+
+				{/* Shadow 카테고리 */}
+				<StyleCategory
+					title="Shadow"
+					isOpen={openCategories.shadow}
+					onToggle={() => toggleCategory("shadow")}
+				>
+					<StyleInput
+						label="Box Shadow"
+						value={currentStyles.boxShadow}
+						onChange={(v) => handleStyleChange("boxShadow", v)}
+						placeholder="0 2px 4px rgba(0,0,0,0.1)"
+					/>
+					<StyleInput
+						label="Text Shadow"
+						value={currentStyles.textShadow}
+						onChange={(v) => handleStyleChange("textShadow", v)}
+						placeholder="0 1px 2px rgba(0,0,0,0.1)"
+					/>
+				</StyleCategory>
 			</div>
+		</div>
+	);
+}
+
+/**
+ * 스타일 카테고리 아코디언
+ */
+interface StyleCategoryProps {
+	title: string;
+	isOpen: boolean;
+	onToggle: () => void;
+	children: React.ReactNode;
+}
+
+function StyleCategory({
+	title,
+	isOpen,
+	onToggle,
+	children,
+}: StyleCategoryProps) {
+	return (
+		<div className="rounded-lg border border-zinc-200 dark:border-zinc-700">
+			<button
+				type="button"
+				onClick={onToggle}
+				className="flex w-full items-center justify-between px-3 py-2 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
+			>
+				<span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+					{title}
+				</span>
+				<ChevronDown
+					className={`h-4 w-4 text-zinc-500 transition-transform dark:text-zinc-400 ${
+						isOpen ? "rotate-180" : ""
+					}`}
+				/>
+			</button>
+			{isOpen && (
+				<div className="space-y-3 border-t border-zinc-200 p-3 dark:border-zinc-700">
+					{children}
+				</div>
+			)}
+		</div>
+	);
+}
+
+/**
+ * 스타일 입력 필드
+ */
+interface StyleInputProps {
+	label: string;
+	value: string | number | undefined;
+	onChange: (value: string) => void;
+	placeholder?: string;
+}
+
+function StyleInput({ label, value, onChange, placeholder }: StyleInputProps) {
+	// number를 string으로 변환
+	const stringValue = value !== undefined ? String(value) : "";
+
+	return (
+		<div>
+			<label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
+				{label}
+			</label>
+			<input
+				type="text"
+				value={stringValue}
+				onChange={(e) => onChange(e.target.value)}
+				placeholder={placeholder}
+				className="w-full rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+			/>
 		</div>
 	);
 }
