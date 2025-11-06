@@ -66,8 +66,8 @@ export function Canvas() {
 					// 페이지 렌더링
 					<PageRenderer page={currentPage} breakpoint={currentBreakpoint} />
 				) : (
-					// 빈 캔버스 상태
-					<div className="flex h-full min-h-[600px] items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-700">
+					// 빈 캔버스 상태 (pointer-events-none으로 드롭 영역 방해하지 않음)
+					<div className="pointer-events-none flex h-full min-h-[600px] items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-700">
 						<div className="text-center">
 							<p className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
 								여기에 컴포넌트를 드래그하세요
