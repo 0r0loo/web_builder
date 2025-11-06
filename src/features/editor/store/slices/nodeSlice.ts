@@ -72,20 +72,33 @@ export const createNodeSlice: StateCreator<
 	},
 
 	/**
-	 * 노드 업데이트
+	 * 노드 업데이트 (Immer 스타일)
 	 */
 	updateNode: (nodeId, updates) => {
 		set((state) => {
-			const currentPage = state.pages.find((page) => page.id === state.currentPageId);
-			if (!currentPage) return state;
+			const currentPage = state.pages.find(
+				(page) => page.id === state.currentPageId,
+			);
+			if (!currentPage) return;
 
-			const updatedPage = updateNodeInTree(currentPage, nodeId, updates);
+			// 노드 찾아서 업데이트
+			const updateInTree = (current: ComponentNode): boolean => {
+				if (current.id === nodeId) {
+					Object.assign(current, updates);
+					return true;
+				}
 
-			return {
-				pages: state.pages.map((page) =>
-					page.id === state.currentPageId ? updatedPage : page,
-				),
+				if (current.children) {
+					for (const child of current.children) {
+						if (updateInTree(child)) return true;
+					}
+				}
+
+				return false;
 			};
+
+			updateInTree(currentPage.root);
+			currentPage.updatedAt = Date.now();
 		});
 
 		get().saveToHistory();
