@@ -200,7 +200,6 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
 	const handleStyleChange = (key: string, value: string) => {
 		updateNode(node.id, {
 			styles: {
-				...node.styles,
 				[currentBreakpoint]: {
 					...currentStyles,
 					[key]: value,
