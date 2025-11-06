@@ -5,6 +5,7 @@ import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { useEditorStore } from "@/features/editor/store/editorStore";
 import { EditorHeader } from "@/features/editor/components/EditorHeader";
 import { ComponentLibrary } from "@/features/editor/components/ComponentLibrary";
+import { LayersPanel } from "@/features/editor/components/LayersPanel";
 import { Canvas } from "@/features/editor/components/Canvas";
 import { PropertiesPanel } from "@/features/editor/components/PropertiesPanel";
 import { DragPreview } from "@/features/editor/components/DragPreview";
@@ -192,10 +193,15 @@ export default function EditorPage() {
 
 				{/* 메인 콘텐츠 */}
 				<div className="flex flex-1 overflow-hidden">
-					{/* 좌측 사이드바 - 컴포넌트 라이브러리 */}
+					{/* 좌측 사이드바 - 컴포넌트 라이브러리 & 레이어 */}
 					{showComponentLibrary && (
-						<aside className="w-64 border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-							<ComponentLibrary />
+						<aside className="flex w-64 flex-col border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+							<div className="flex-1 overflow-hidden border-b border-zinc-200 dark:border-zinc-800">
+								<ComponentLibrary />
+							</div>
+							<div className="flex-1 overflow-hidden">
+								<LayersPanel />
+							</div>
 						</aside>
 					)}
 
