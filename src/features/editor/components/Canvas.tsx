@@ -1,5 +1,6 @@
 "use client";
 
+import { useDroppable } from "@dnd-kit/core";
 import { useEditorStore } from "../store/editorStore";
 import { cn } from "@/lib/utils/cn";
 import { PageRenderer } from "@/features/renderer/PageRenderer";
@@ -11,6 +12,15 @@ import { PageRenderer } from "@/features/renderer/PageRenderer";
 export function Canvas() {
 	const currentPage = useEditorStore((state) => state.getCurrentPage());
 	const currentBreakpoint = useEditorStore((state) => state.currentBreakpoint);
+
+	// 루트 droppable 영역 설정
+	const { setNodeRef, isOver } = useDroppable({
+		id: currentPage?.root.id || "root",
+		data: {
+			type: "canvas-root",
+			accepts: ["component-library"],
+		},
+	});
 
 	if (!currentPage) {
 		return (
@@ -41,9 +51,11 @@ export function Canvas() {
 	return (
 		<div className="flex h-full items-start justify-center overflow-auto bg-zinc-50 p-8 dark:bg-zinc-900">
 			<div
+				ref={setNodeRef}
 				className={cn(
 					"min-h-[600px] bg-white shadow-lg transition-all duration-300 dark:bg-zinc-800",
 					currentBreakpoint === "desktop" ? "w-full" : "mx-auto",
+					isOver && "ring-2 ring-blue-500 ring-offset-2",
 				)}
 				style={{
 					width: canvasWidth,

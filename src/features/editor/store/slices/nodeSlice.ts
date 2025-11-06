@@ -26,45 +26,107 @@ export interface NodeSlice {
 
 export const createNodeSlice: StateCreator<
 	EditorStore,
-	[],
+	[["zustand/immer", never]],
 	[],
 	NodeSlice
 > = (set, get) => ({
 	/**
-	 * 노드 추가
+	 * 노드 추가 (Immer 스타일)
 	 */
 	addNode: (parentId, node) => {
 		set((state) => {
-			const currentPage = state.pages.find((page) => page.id === state.currentPageId);
-			if (!currentPage) return state;
+			const currentPage = state.pages.find(
+				(page) => page.id === state.currentPageId,
+			);
+			if (!currentPage) return;
 
-			const updatedPage = addNodeToTree(currentPage, parentId, node);
+			// parentId가 null이면 루트에 추가
+			if (parentId === null || parentId === currentPage.root.id) {
+				if (!currentPage.root.children) currentPage.root.children = [];
+				currentPage.root.children.push(node);
+			} else {
+				// 특정 부모 노드 찾아서 추가
+				const addToParent = (current: ComponentNode): boolean => {
+					if (current.id === parentId) {
+						if (!current.children) current.children = [];
+						current.children.push(node);
+						return true;
+					}
 
-			return {
-				pages: state.pages.map((page) =>
-					page.id === state.currentPageId ? updatedPage : page,
-				),
-			};
+					if (current.children) {
+						for (const child of current.children) {
+							if (addToParent(child)) return true;
+						}
+					}
+
+					return false;
+				};
+
+				addToParent(currentPage.root);
+			}
+
+			currentPage.updatedAt = Date.now();
 		});
 
 		get().saveToHistory();
 	},
 
 	/**
-	 * 노드 업데이트
+	 * 노드 업데이트 (Immer 스타일)
 	 */
 	updateNode: (nodeId, updates) => {
 		set((state) => {
-			const currentPage = state.pages.find((page) => page.id === state.currentPageId);
-			if (!currentPage) return state;
+			const currentPage = state.pages.find(
+				(page) => page.id === state.currentPageId,
+			);
+			if (!currentPage) return;
 
-			const updatedPage = updateNodeInTree(currentPage, nodeId, updates);
+			// 노드 찾아서 업데이트
+			const updateInTree = (current: ComponentNode): boolean => {
+				if (current.id === nodeId) {
+					// props와 styles는 deep merge 필요
+					if (updates.props) {
+						current.props = {
+							...current.props,
+							...updates.props,
+						};
+					}
 
-			return {
-				pages: state.pages.map((page) =>
-					page.id === state.currentPageId ? updatedPage : page,
-				),
+					if (updates.styles) {
+						current.styles = {
+							desktop: {
+								...current.styles.desktop,
+								...updates.styles.desktop,
+							},
+							tablet: {
+								...current.styles.tablet,
+								...updates.styles.tablet,
+							},
+							mobile: {
+								...current.styles.mobile,
+								...updates.styles.mobile,
+							},
+						};
+					}
+
+					// 나머지 속성은 직접 할당
+					const { props, styles, ...rest } = updates;
+					Object.assign(current, rest);
+
+					return true;
+				}
+
+				if (current.children) {
+					for (const child of current.children) {
+						if (updateInTree(child)) return true;
+					}
+				}
+
+				return false;
 			};
+
+			updateInTree(currentPage.root);
+			currentPage.updatedAt = Date.now();
 		});
 
 		get().saveToHistory();

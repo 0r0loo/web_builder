@@ -1,9 +1,14 @@
+"use client";
+
+import { useDroppable } from "@dnd-kit/core";
 import type { ComponentNode } from "@/types/component";
 import type { Breakpoint } from "@/types/editor";
 import { getComponent } from "@/features/builder-components/registry";
 import { Text } from "@/features/builder-components/primitives/Text";
 import { Button } from "@/features/builder-components/primitives/Button";
 import { Container } from "@/features/builder-components/primitives/Container";
+import { cn } from "@/lib/utils/cn";
+import { useEditorStore } from "@/features/editor/store/editorStore";
 import type { CSSProperties } from "react";
 
 /**
@@ -63,6 +68,29 @@ export function ComponentRenderer({
 	// 레지스트리에서 컴포넌트 메타데이터 조회
 	const metadata = getComponent(node.type);
 
+	// 선택 상태 관리
+	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
+	const selectNode = useEditorStore((state) => state.selectNode);
+	const isSelected = selectedNodeId === node.id;
+
+	// Container인 경우 droppable 설정
+	const isContainer = metadata?.allowChildren;
+	const { setNodeRef, isOver } = useDroppable({
+		id: node.id,
+		data: {
+			type: "canvas-container",
+			nodeId: node.id,
+			accepts: ["component-library", "canvas-node"],
+		},
+		disabled: !isContainer,
+	});
+
+	// 클릭 이벤트 핸들러
+	const handleClick = (e: React.MouseEvent) => {
+		e.stopPropagation(); // 이벤트 버블링 방지
+		selectNode(node.id);
+	};
+
 	// 등록되지 않은 컴포넌트는 에러 표시
 	if (!metadata) {
 		return (
@@ -104,7 +132,18 @@ export function ComponentRenderer({
 
 	// 컴포넌트 렌더링
 	return (
-		<div style={styles} data-component-id={node.id} data-component-type={node.type}>
+		<div
+			ref={isContainer ? setNodeRef : undefined}
+			onClick={handleClick}
+			className={cn(
+				"relative cursor-pointer transition-all",
+				isContainer && isOver && "ring-2 ring-green-500 ring-inset",
+				isSelected && "ring-2 ring-blue-500 ring-offset-2",
+			)}
+			style={styles}
+			data-component-id={node.id}
+			data-component-type={node.type}
+		>
 			<Component node={node}>{children}</Component>
 		</div>
 	);

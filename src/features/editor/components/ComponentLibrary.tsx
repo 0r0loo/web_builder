@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import {
 	getComponentsGroupedByCategory,
 	getRegistrySize,
@@ -21,6 +23,55 @@ const categoryLabels: Record<ComponentCategory, string> = {
 	media: "미디어",
 	navigation: "네비게이션",
 };
+
+/**
+ * 드래그 가능한 컴포넌트 아이템
+ */
+interface DraggableComponentItemProps {
+	component: ComponentMetadata;
+}
+
+function DraggableComponentItem({ component }: DraggableComponentItemProps) {
+	const { attributes, listeners, setNodeRef, transform, isDragging } =
+		useDraggable({
+			id: `component-${component.type}`,
+			data: {
+				type: "component-library",
+				componentType: component.type,
+			},
+		});
+
+	const style = {
+		transform: CSS.Translate.toString(transform),
+		opacity: isDragging ? 0.5 : 1,
+		cursor: isDragging ? "grabbing" : "grab",
+	};
+
+	const Icon = component.icon;
+
+	return (
+		<button
+			ref={setNodeRef}
+			type="button"
+			className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-750"
+			style={style}
+			{...attributes}
+			{...listeners}
+		>
+			<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700">
+				<Icon className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
+			</div>
+			<div className="flex-1">
+				<div className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+					{component.label}
+				</div>
+				<div className="text-xs text-zinc-500 dark:text-zinc-400">
+					{component.description}
+				</div>
+			</div>
+		</button>
+	);
+}
 
 /**
  * 컴포넌트 라이브러리 사이드바
@@ -67,28 +118,12 @@ export function ComponentLibrary() {
 									{categoryLabels[category]}
 								</h3>
 								<div className="space-y-1">
-									{components.map((component) => {
-										const Icon = component.icon;
-										return (
-											<button
-												key={component.type}
-												type="button"
-												className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-750"
-											>
-												<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-700">
-													<Icon className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
-												</div>
-												<div className="flex-1">
-													<div className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-														{component.label}
-													</div>
-													<div className="text-xs text-zinc-500 dark:text-zinc-400">
-														{component.description}
-													</div>
-												</div>
-											</button>
-										);
-									})}
+									{components.map((component) => (
+										<DraggableComponentItem
+											key={component.type}
+											component={component}
+										/>
+									))}
 								</div>
 							</div>
 						))}

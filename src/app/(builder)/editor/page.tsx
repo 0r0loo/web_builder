@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { useEditorStore } from "@/features/editor/store/editorStore";
 import { EditorHeader } from "@/features/editor/components/EditorHeader";
 import { ComponentLibrary } from "@/features/editor/components/ComponentLibrary";
 import { Canvas } from "@/features/editor/components/Canvas";
 import { PropertiesPanel } from "@/features/editor/components/PropertiesPanel";
+import { DragPreview } from "@/features/editor/components/DragPreview";
+import { useDragAndDrop } from "@/features/editor/hooks/useDragAndDrop";
 
 /**
  * 웹 빌더 에디터 메인 페이지
@@ -22,6 +25,16 @@ export default function EditorPage() {
 
 	const addNode = useEditorStore((state) => state.addNode);
 	const getCurrentPage = useEditorStore((state) => state.getCurrentPage);
+
+	// 드래그 앤 드롭 설정
+	const {
+		sensors,
+		activeData,
+		handleDragStart,
+		handleDragOver,
+		handleDragEnd,
+		handleDragCancel,
+	} = useDragAndDrop();
 
 	// 초기 페이지 생성 및 샘플 컴포넌트 추가
 	useEffect(() => {
@@ -138,31 +151,46 @@ export default function EditorPage() {
 	}, [currentPageId, createPage, addNode, getCurrentPage]);
 
 	return (
-		<div className="flex h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
-			{/* 헤더 */}
-			<EditorHeader />
+		<DndContext
+			sensors={sensors}
+			onDragStart={handleDragStart}
+			onDragOver={handleDragOver}
+			onDragEnd={handleDragEnd}
+			onDragCancel={handleDragCancel}
+		>
+			<div className="flex h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
+				{/* 헤더 */}
+				<EditorHeader />
 
-			{/* 메인 콘텐츠 */}
-			<div className="flex flex-1 overflow-hidden">
-				{/* 좌측 사이드바 - 컴포넌트 라이브러리 */}
-				{showComponentLibrary && (
-					<aside className="w-64 border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-						<ComponentLibrary />
-					</aside>
-				)}
+				{/* 메인 콘텐츠 */}
+				<div className="flex flex-1 overflow-hidden">
+					{/* 좌측 사이드바 - 컴포넌트 라이브러리 */}
+					{showComponentLibrary && (
+						<aside className="w-64 border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+							<ComponentLibrary />
+						</aside>
+					)}
 
-				{/* 중앙 캔버스 */}
-				<main className="flex-1 overflow-auto">
-					<Canvas />
-				</main>
+					{/* 중앙 캔버스 */}
+					<main className="flex-1 overflow-auto">
+						<Canvas />
+					</main>
 
-				{/* 우측 사이드바 - 속성 패널 */}
-				{showPropertiesPanel && (
-					<aside className="w-80 border-l border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-						<PropertiesPanel />
-					</aside>
-				)}
+					{/* 우측 사이드바 - 속성 패널 */}
+					{showPropertiesPanel && (
+						<aside className="w-80 border-l border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+							<PropertiesPanel />
+						</aside>
+					)}
+				</div>
 			</div>
-		</div>
+
+			{/* 드래그 오버레이 - 드래그 중인 항목의 프리뷰 */}
+			<DragOverlay>
+				{activeData?.type === "component-library" && (
+					<DragPreview componentType={activeData.componentType} />
+				)}
+			</DragOverlay>
+		</DndContext>
 	);
 }

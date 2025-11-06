@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import type { EditorStore } from "@/types/editor";
 import { createPageSlice, type PageSlice } from "./slices/pageSlice";
 import { createNodeSlice, type NodeSlice } from "./slices/nodeSlice";
@@ -23,15 +24,19 @@ import { createUISlice, type UISlice } from "./slices/uiSlice";
  * - viewportSlice: 브레이크포인트 및 에디터 모드
  * - historySlice: Undo/Redo 히스토리
  * - uiSlice: UI 패널 토글
+ *
+ * Immer 미들웨어를 사용하여 불변성을 자동으로 처리합니다.
  */
-export const useEditorStore = create<EditorStore>()((...a) => ({
-	...createPageSlice(...a),
-	...createNodeSlice(...a),
-	...createSelectionSlice(...a),
-	...createViewportSlice(...a),
-	...createHistorySlice(...a),
-	...createUISlice(...a),
-}));
+export const useEditorStore = create<EditorStore>()(
+	immer((...a) => ({
+		...createPageSlice(...a),
+		...createNodeSlice(...a),
+		...createSelectionSlice(...a),
+		...createViewportSlice(...a),
+		...createHistorySlice(...a),
+		...createUISlice(...a),
+	})),
+);
 
 /**
  * 타입 export (다른 파일에서 import 용)
