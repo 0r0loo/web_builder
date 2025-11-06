@@ -78,6 +78,7 @@ export function ComponentRenderer({
 	const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
 	const selectNode = useEditorStore((state) => state.selectNode);
 	const deleteNode = useEditorStore((state) => state.deleteNode);
+	const duplicateNode = useEditorStore((state) => state.duplicateNode);
 	const isSelected = selectedNodeId === node.id;
 
 	// Container인 경우 droppable 설정
@@ -125,8 +126,7 @@ export function ComponentRenderer({
 	};
 
 	const handleDuplicate = () => {
-		// TODO: 복제 기능 구현 예정
-		console.log("복제 기능은 아직 구현되지 않았습니다.");
+		duplicateNode(node.id);
 	};
 
 	// 등록되지 않은 컴포넌트는 에러 표시
