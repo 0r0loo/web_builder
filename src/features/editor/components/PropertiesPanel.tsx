@@ -210,6 +210,64 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
 						Container는 별도의 props가 없습니다
 					</p>
 				)}
+
+				{/* Image 컴포넌트 */}
+				{node.type === "image" && (
+					<>
+						<div>
+							<label
+								htmlFor="prop-src"
+								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
+							>
+								이미지 URL
+							</label>
+							<input
+								id="prop-src"
+								type="text"
+								value={(node.props.src as string) || ""}
+								onChange={(e) => handlePropChange("src", e.target.value)}
+								placeholder="https://example.com/image.jpg"
+								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+							/>
+						</div>
+						<div>
+							<label
+								htmlFor="prop-alt"
+								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
+							>
+								대체 텍스트 (Alt)
+							</label>
+							<input
+								id="prop-alt"
+								type="text"
+								value={(node.props.alt as string) || ""}
+								onChange={(e) => handlePropChange("alt", e.target.value)}
+								placeholder="이미지 설명"
+								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+							/>
+						</div>
+						<div>
+							<label
+								htmlFor="prop-objectFit"
+								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
+							>
+								Object Fit
+							</label>
+							<select
+								id="prop-objectFit"
+								value={(node.props.objectFit as string) || "cover"}
+								onChange={(e) => handlePropChange("objectFit", e.target.value)}
+								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+							>
+								<option value="cover">Cover</option>
+								<option value="contain">Contain</option>
+								<option value="fill">Fill</option>
+								<option value="none">None</option>
+								<option value="scale-down">Scale Down</option>
+							</select>
+						</div>
+					</>
+				)}
 			</div>
 		</div>
 	);
