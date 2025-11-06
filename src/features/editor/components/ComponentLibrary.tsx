@@ -53,7 +53,7 @@ function DraggableComponentItem({ component }: DraggableComponentItemProps) {
 		<button
 			ref={setNodeRef}
 			type="button"
-			className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-750"
+			className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700"
 			style={style}
 			{...attributes}
 			{...listeners}
