@@ -283,6 +283,12 @@ function exportPage(page: Page): string {
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4
 
+### Backend & Database
+- **Hosting**: Railway (앱 + DB 통합 배포)
+- **Database**: PostgreSQL (Railway)
+- **ORM**: Drizzle ORM
+- **API**: Next.js API Routes (RESTful)
+
 ### Editor
 - **Drag & Drop**: @dnd-kit/core, @dnd-kit/sortable
 - **State Management**: Zustand
@@ -291,13 +297,14 @@ function exportPage(page: Page): string {
 
 ### Publishing
 - **Static Export**: Next.js static export
-- **Deployment**: Vercel API or GitHub Pages
+- **Deployment**: Railway
 - **Image Optimization**: Sharp (server-side)
 
-### Optional Enhancements
+### Future Enhancements
+- **WebSocket**: Railway 기반 실시간 협업
 - **Rich Text**: TipTap or Slate (나중에 추가)
-- **Asset Storage**: Vercel Blob or Cloudinary
-- **Collaboration**: Yjs (실시간 협업, 나중에 추가)
+- **Asset Storage**: Railway 또는 Cloudflare R2
+- **Collaboration**: WebSocket + Yjs (실시간 협업, 나중에 추가)
 
 ## 디렉토리 구조
 

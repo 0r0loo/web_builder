@@ -6,6 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Modern Next.js 16 application with React 19, TypeScript, Tailwind CSS v4, and Biome for linting/formatting. Uses React Compiler for automatic optimization.
 
+**Backend & Database:**
+- **Hosting**: Railway (앱 + DB 통합 배포)
+- **Database**: PostgreSQL (Railway)
+- **ORM**: Drizzle ORM (타입 안전한 SQL 쿼리)
+- **API**: Next.js API Routes (RESTful)
+- **Future**: WebSocket 서버 (실시간 협업용)
+
 ## Development Commands
 
 ### Core Development

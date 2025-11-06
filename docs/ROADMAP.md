@@ -273,7 +273,7 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 #### 8.1 추가 Primitive 컴포넌트
 - [ ] Heading (h1-h6)
 - [ ] Paragraph
-- [ ] Image
+- [ ] Image (이미 완료)
 - [ ] Link
 
 #### 8.2 Layout 컴포넌트
@@ -283,6 +283,39 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 - [ ] Spacer
 
 **결과물**: 10개 정도의 컴포넌트로 기본적인 페이지를 만들 수 있음
+
+---
+
+## Phase 8.5: 인터랙션 시스템 (2-3일) 🆕
+
+### 목표
+컴포넌트에 클릭/호버 등의 인터랙션을 추가할 수 있습니다.
+
+### 작업 항목
+
+#### 8.5.1 모달/다이얼로그 시스템
+- [ ] Modal 컴포넌트 추가
+- [ ] Button에 `onClick` 액션 설정 (openModal, closeModal, navigate)
+- [ ] 모달 트리거 및 타겟 연결
+- [ ] 모달 오픈/클로즈 상태 관리
+- [ ] 모달 내부에 컴포넌트 배치 가능
+
+#### 8.5.2 페이지 간 네비게이션
+- [ ] Link 컴포넌트 확장
+  - 외부 URL (href)
+  - 내부 페이지 참조 (pageId)
+  - 모달 열기 (modalId)
+- [ ] 페이지 관리 UI (헤더에 페이지 탭)
+- [ ] 페이지 생성/삭제/전환
+- [ ] Export 시 다중 HTML 파일 생성
+
+#### 8.5.3 고급 인터랙션 (선택적)
+- [ ] 탭 컴포넌트
+- [ ] 아코디언 컴포넌트
+- [ ] 캐러셀/슬라이더
+- [ ] 드롭다운 메뉴
+
+**결과물**: 버튼 클릭 시 모달이 열리거나 다른 페이지로 이동할 수 있음
 
 ---
 
