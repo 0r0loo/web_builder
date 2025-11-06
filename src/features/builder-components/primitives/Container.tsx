@@ -35,6 +35,8 @@ export const containerMetadata: ComponentMetadata = {
 
 /**
  * Container 렌더 컴포넌트
+ * 스타일은 ComponentRenderer의 wrapper div에 이미 적용되므로
+ * 여기서는 children만 렌더링
  */
 interface ContainerProps {
 	node: ComponentNode;
@@ -42,5 +44,5 @@ interface ContainerProps {
 }
 
 export function Container({ children }: ContainerProps) {
-	return <div>{children}</div>;
+	return <>{children}</>;
 }
