@@ -37,5 +37,46 @@ interface TextProps {
 export function Text({ node }: TextProps) {
 	const { content = "텍스트를 입력하세요" } = node.props;
 
-	return <span>{content}</span>;
+	// 기본 스타일
+	const baseStyle: React.CSSProperties = {
+		fontSize: "16px",
+		lineHeight: "1.5",
+		color: "#000000",
+	};
+
+	// node.styles에서 시각적 스타일만 추출 (레이아웃 제외)
+	const visualStyles: React.CSSProperties = {};
+	if (node.styles?.desktop) {
+		const {
+			// 레이아웃 속성 제외
+			display,
+			position,
+			top,
+			left,
+			right,
+			bottom,
+			margin,
+			marginTop,
+			marginBottom,
+			marginLeft,
+			marginRight,
+			width,
+			height,
+			maxWidth,
+			minWidth,
+			maxHeight,
+			minHeight,
+			zIndex,
+			...visual
+		} = node.styles.desktop;
+		Object.assign(visualStyles, visual);
+	}
+
+	// 최종 스타일 병합
+	const textStyle: React.CSSProperties = {
+		...baseStyle,
+		...visualStyles,
+	};
+
+	return <span style={textStyle}>{content}</span>;
 }

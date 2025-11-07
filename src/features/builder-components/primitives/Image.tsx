@@ -43,14 +43,42 @@ export function Image({ node }: ImageProps) {
 		objectFit = "cover",
 	} = node.props;
 
-	return (
-		<img
-			src={src as string}
-			alt={alt as string}
-			style={{
-				objectFit: objectFit as any,
-				display: "block",
-			}}
-		/>
-	);
+	// 기본 스타일
+	const baseStyle: React.CSSProperties = {
+		width: "100%",
+		height: "auto",
+		borderRadius: "8px",
+		objectFit: objectFit as any,
+		display: "block",
+	};
+
+	// node.styles에서 시각적 스타일만 추출 (레이아웃 제외)
+	const visualStyles: React.CSSProperties = {};
+	if (node.styles?.desktop) {
+		const {
+			// 레이아웃 속성 제외
+			display,
+			position,
+			top,
+			left,
+			right,
+			bottom,
+			margin,
+			marginTop,
+			marginBottom,
+			marginLeft,
+			marginRight,
+			zIndex,
+			...visual
+		} = node.styles.desktop;
+		Object.assign(visualStyles, visual);
+	}
+
+	// 최종 스타일 병합
+	const imageStyle: React.CSSProperties = {
+		...baseStyle,
+		...visualStyles,
+	};
+
+	return <img src={src as string} alt={alt as string} style={imageStyle} />;
 }

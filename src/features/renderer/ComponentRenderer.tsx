@@ -175,6 +175,30 @@ export function ComponentRenderer({
 		opacity: isDragging ? 0.5 : 1,
 	};
 
+	// 래퍼 div는 레이아웃 스타일만 적용 (position, display, margin 등)
+	const wrapperStyles: CSSProperties = {
+		// 레이아웃 관련 스타일만 추출
+		...(styles.display && { display: styles.display }),
+		...(styles.position && { position: styles.position }),
+		...(styles.top && { top: styles.top }),
+		...(styles.left && { left: styles.left }),
+		...(styles.right && { right: styles.right }),
+		...(styles.bottom && { bottom: styles.bottom }),
+		...(styles.margin && { margin: styles.margin }),
+		...(styles.marginTop && { marginTop: styles.marginTop }),
+		...(styles.marginBottom && { marginBottom: styles.marginBottom }),
+		...(styles.marginLeft && { marginLeft: styles.marginLeft }),
+		...(styles.marginRight && { marginRight: styles.marginRight }),
+		...(styles.width && { width: styles.width }),
+		...(styles.height && { height: styles.height }),
+		...(styles.maxWidth && { maxWidth: styles.maxWidth }),
+		...(styles.minWidth && { minWidth: styles.minWidth }),
+		...(styles.maxHeight && { maxHeight: styles.maxHeight }),
+		...(styles.minHeight && { minHeight: styles.minHeight }),
+		...(styles.zIndex && { zIndex: styles.zIndex }),
+		...dragStyle,
+	};
+
 	// 컴포넌트 렌더링
 	return (
 		<ContextMenu.Root>
@@ -189,7 +213,7 @@ export function ComponentRenderer({
 						isSelected && "ring-2 ring-blue-500 ring-offset-2",
 						isDragging && "z-50",
 					)}
-					style={{ ...styles, ...dragStyle }}
+					style={wrapperStyles}
 					data-component-id={node.id}
 					data-component-type={node.type}
 					{...(isSelected ? { ...attributes, ...listeners } : {})}

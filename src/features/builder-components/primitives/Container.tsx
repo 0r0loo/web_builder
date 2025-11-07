@@ -35,14 +35,50 @@ export const containerMetadata: ComponentMetadata = {
 
 /**
  * Container 렌더 컴포넌트
- * 스타일은 ComponentRenderer의 wrapper div에 이미 적용되므로
- * 여기서는 children만 렌더링
  */
 interface ContainerProps {
 	node: ComponentNode;
 	children?: React.ReactNode;
 }
 
-export function Container({ children }: ContainerProps) {
-	return <>{children}</>;
+export function Container({ node, children }: ContainerProps) {
+	// 기본 스타일
+	const baseStyle: React.CSSProperties = {
+		display: "flex",
+		flexDirection: "column",
+		gap: "16px",
+		padding: "24px",
+		backgroundColor: "#ffffff",
+		borderRadius: "8px",
+		border: "1px solid #e5e7eb",
+	};
+
+	// node.styles에서 시각적 스타일만 추출 (레이아웃 제외)
+	const visualStyles: React.CSSProperties = {};
+	if (node.styles?.desktop) {
+		const {
+			// 레이아웃 제외 (position, margin 등)
+			position,
+			top,
+			left,
+			right,
+			bottom,
+			margin,
+			marginTop,
+			marginBottom,
+			marginLeft,
+			marginRight,
+			zIndex,
+			...visual
+		} = node.styles.desktop;
+		Object.assign(visualStyles, visual);
+	}
+
+	// 최종 스타일 병합
+	const containerStyle: React.CSSProperties = {
+		...baseStyle,
+		...visualStyles,
+	};
+
+	return <div style={containerStyle}>{children}</div>;
 }
