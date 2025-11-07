@@ -213,7 +213,14 @@ export function ComponentRenderer({
 						isSelected && "ring-2 ring-blue-500 ring-offset-2",
 						isDragging && "z-50",
 					)}
-					style={wrapperStyles}
+					style={{
+						...wrapperStyles,
+						...(isSelected && {
+							userSelect: "none",
+							WebkitUserSelect: "none",
+							touchAction: "none",
+						}),
+					}}
 					data-component-id={node.id}
 					data-component-type={node.type}
 					{...(isSelected ? { ...attributes, ...listeners } : {})}

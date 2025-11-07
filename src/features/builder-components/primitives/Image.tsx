@@ -80,5 +80,21 @@ export function Image({ node }: ImageProps) {
 		...visualStyles,
 	};
 
-	return <img src={src as string} alt={alt as string} style={imageStyle} />;
+	// wrapper div 스타일: 이미지를 감싸고 이벤트를 받을 수 있는 영역 생성
+	const wrapperStyle: React.CSSProperties = {
+		width: "100%",
+		height: "100%",
+		display: "block",
+	};
+
+	return (
+		<div style={wrapperStyle}>
+			<img
+				src={src as string}
+				alt={alt as string}
+				style={imageStyle}
+				draggable={false}
+			/>
+		</div>
+	);
 }
