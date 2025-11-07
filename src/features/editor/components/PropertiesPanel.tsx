@@ -5,6 +5,8 @@ import { useEditorStore } from "../store/editorStore";
 import { findNodeById } from "@/lib/utils/tree";
 import { getComponent } from "@/features/builder-components/registry";
 import { Monitor, Tablet, Smartphone, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/buttons";
+import { Input, Label, Textarea, Select } from "@/components/ui/forms";
 
 /**
  * 속성 패널
@@ -77,14 +79,14 @@ export function PropertiesPanel() {
 							{metadata?.label || selectedNode.type}
 						</p>
 					</div>
-					<button
-						type="button"
+					<Button
+						variant="danger"
+						size="sm"
 						onClick={handleDelete}
-						className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-700 dark:hover:bg-red-800"
 						title="Delete (Del)"
 					>
 						삭제
-					</button>
+					</Button>
 				</div>
 			</div>
 
@@ -92,18 +94,12 @@ export function PropertiesPanel() {
 				<div className="space-y-6">
 					{/* 컴포넌트 ID */}
 					<div>
-						<label
-							htmlFor="component-id"
-							className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-						>
-							컴포넌트 ID
-						</label>
-						<input
+						<Label htmlFor="component-id">컴포넌트 ID</Label>
+						<Input
 							id="component-id"
-							type="text"
 							value={selectedNodeId}
 							readOnly
-							className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
+							variant="readonly"
 						/>
 					</div>
 
@@ -149,18 +145,12 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
 				{/* Text 컴포넌트 */}
 				{node.type === "text" && (
 					<div>
-						<label
-							htmlFor="prop-content"
-							className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-						>
-							텍스트 내용
-						</label>
-						<textarea
+						<Label htmlFor="prop-content">텍스트 내용</Label>
+						<Textarea
 							id="prop-content"
 							value={(node.props.content as string) || ""}
 							onChange={(e) => handlePropChange("content", e.target.value)}
 							rows={3}
-							className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 						/>
 					</div>
 				)}
@@ -169,37 +159,24 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
 				{node.type === "button" && (
 					<>
 						<div>
-							<label
-								htmlFor="prop-text"
-								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-							>
-								버튼 텍스트
-							</label>
-							<input
+							<Label htmlFor="prop-text">버튼 텍스트</Label>
+							<Input
 								id="prop-text"
-								type="text"
 								value={(node.props.text as string) || ""}
 								onChange={(e) => handlePropChange("text", e.target.value)}
-								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 							/>
 						</div>
 						<div>
-							<label
-								htmlFor="prop-variant"
-								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-							>
-								스타일 변형
-							</label>
-							<select
+							<Label htmlFor="prop-variant">스타일 변형</Label>
+							<Select
 								id="prop-variant"
 								value={(node.props.variant as string) || "primary"}
 								onChange={(e) => handlePropChange("variant", e.target.value)}
-								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 							>
 								<option value="primary">Primary</option>
 								<option value="secondary">Secondary</option>
 								<option value="outline">Outline</option>
-							</select>
+							</Select>
 						</div>
 					</>
 				)}
@@ -215,56 +192,37 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
 				{node.type === "image" && (
 					<>
 						<div>
-							<label
-								htmlFor="prop-src"
-								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-							>
-								이미지 URL
-							</label>
-							<input
+							<Label htmlFor="prop-src">이미지 URL</Label>
+							<Input
 								id="prop-src"
-								type="text"
+								type="url"
 								value={(node.props.src as string) || ""}
 								onChange={(e) => handlePropChange("src", e.target.value)}
 								placeholder="https://example.com/image.jpg"
-								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 							/>
 						</div>
 						<div>
-							<label
-								htmlFor="prop-alt"
-								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-							>
-								대체 텍스트 (Alt)
-							</label>
-							<input
+							<Label htmlFor="prop-alt">대체 텍스트 (Alt)</Label>
+							<Input
 								id="prop-alt"
-								type="text"
 								value={(node.props.alt as string) || ""}
 								onChange={(e) => handlePropChange("alt", e.target.value)}
 								placeholder="이미지 설명"
-								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 							/>
 						</div>
 						<div>
-							<label
-								htmlFor="prop-objectFit"
-								className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-							>
-								Object Fit
-							</label>
-							<select
+							<Label htmlFor="prop-objectFit">Object Fit</Label>
+							<Select
 								id="prop-objectFit"
 								value={(node.props.objectFit as string) || "cover"}
 								onChange={(e) => handlePropChange("objectFit", e.target.value)}
-								className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
 							>
 								<option value="cover">Cover</option>
 								<option value="contain">Contain</option>
 								<option value="fill">Fill</option>
 								<option value="none">None</option>
 								<option value="scale-down">Scale Down</option>
-							</select>
+							</Select>
 						</div>
 					</>
 				)}
@@ -705,15 +663,12 @@ function StyleInput({ label, value, onChange, placeholder }: StyleInputProps) {
 
 	return (
 		<div>
-			<label className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-				{label}
-			</label>
-			<input
-				type="text"
+			<Label className="mb-1">{label}</Label>
+			<Input
 				value={stringValue}
 				onChange={(e) => onChange(e.target.value)}
 				placeholder={placeholder}
-				className="w-full rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+				className="py-1.5"
 			/>
 		</div>
 	);
