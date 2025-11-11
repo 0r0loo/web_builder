@@ -17,6 +17,7 @@ export const containerMetadata: ComponentMetadata = {
     desktop: {
       display: "flex",
       flexDirection: "column",
+      flexWrap: "wrap",
       width: "100%",
     },
     tablet: {},
@@ -33,38 +34,8 @@ interface ContainerProps {
 }
 
 export function Container({ node, children }: ContainerProps) {
-  // 기본 스타일 (최소한의 레이아웃만)
-  const baseStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-  };
-
-  // node.styles에서 시각적 스타일만 추출 (레이아웃 제외)
-  const visualStyles: React.CSSProperties = {};
-  if (node.styles?.desktop) {
-    const {
-      // 레이아웃 제외 (position, margin 등)
-      position,
-      top,
-      left,
-      right,
-      bottom,
-      margin,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      zIndex,
-      ...visual
-    } = node.styles.desktop;
-    Object.assign(visualStyles, visual);
-  }
-
-  // 최종 스타일 병합
-  const containerStyle: React.CSSProperties = {
-    ...baseStyle,
-    ...visualStyles,
-  };
-
-  return <div style={containerStyle}>{children}</div>;
+  // Container는 순수 레이아웃 컴포넌트
+  // 모든 스타일은 ComponentRenderer의 wrapper에 적용되므로
+  // 여기서는 children만 반환
+  return <>{children}</>;
 }
