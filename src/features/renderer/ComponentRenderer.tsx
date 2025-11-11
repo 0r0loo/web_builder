@@ -183,10 +183,15 @@ export function ComponentRenderer({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  // 래퍼 div는 레이아웃 스타일만 적용 (position, display, margin 등)
+  // 래퍼 div는 최소한의 레이아웃 스타일만 적용 (margin, width 등)
+  // display는 실제 컴포넌트에만 적용되어야 함
+
+  // inline 성격의 컴포넌트들 (button, image 등)
+  const inlineComponents = ["button", "image"];
+  const isInlineComponent = inlineComponents.includes(node.type);
+
   const wrapperStyles: CSSProperties = {
-    // 레이아웃 관련 스타일만 추출
-    ...(styles.display && { display: styles.display }),
+    // 외부 레이아웃 관련 스타일만 추출
     ...(styles.position && { position: styles.position }),
     ...(styles.top && { top: styles.top }),
     ...(styles.left && { left: styles.left }),
@@ -204,6 +209,8 @@ export function ComponentRenderer({
     ...(styles.maxHeight && { maxHeight: styles.maxHeight }),
     ...(styles.minHeight && { minHeight: styles.minHeight }),
     ...(styles.zIndex && { zIndex: styles.zIndex }),
+    // inline 컴포넌트는 width가 명시되지 않았으면 fit-content
+    ...(!styles.width && isInlineComponent && { width: "fit-content" }),
     ...dragStyle,
   };
 
