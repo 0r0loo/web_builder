@@ -18,7 +18,8 @@ export default function Home() {
             Web Builder
           </h1>
           <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            드래그 앤 드롭으로 웹사이트를 만드세요. 코딩 없이 누구나 쉽게 사용할 수 있습니다.
+            드래그 앤 드롭으로 웹사이트를 만드세요. 코딩 없이 누구나 쉽게 사용할
+            수 있습니다.
           </p>
         </div>
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">

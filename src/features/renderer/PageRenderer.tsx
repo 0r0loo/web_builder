@@ -2,35 +2,38 @@ import type { ComponentNode } from "@/types/component";
 import type { Page } from "@/types/page";
 import type { Breakpoint } from "@/types/editor";
 import { ComponentRenderer } from "./ComponentRenderer";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 /**
  * 재귀적 노드 렌더러
  */
 interface NodeRendererProps {
-	node: ComponentNode;
-	breakpoint: Breakpoint;
+  node: ComponentNode;
+  breakpoint: Breakpoint;
 }
 
 function NodeRenderer({ node, breakpoint }: NodeRendererProps) {
-	// 자식 노드가 있으면 재귀적으로 렌더링
-	const children =
-		node.children && node.children.length > 0 ? (
-			<SortableContext
-				items={node.children.map((child) => child.id)}
-				strategy={verticalListSortingStrategy}
-			>
-				{node.children.map((child) => (
-					<NodeRenderer key={child.id} node={child} breakpoint={breakpoint} />
-				))}
-			</SortableContext>
-		) : null;
+  // 자식 노드가 있으면 재귀적으로 렌더링
+  const children =
+    node.children && node.children.length > 0 ? (
+      <SortableContext
+        items={node.children.map((child) => child.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        {node.children.map((child) => (
+          <NodeRenderer key={child.id} node={child} breakpoint={breakpoint} />
+        ))}
+      </SortableContext>
+    ) : null;
 
-	return (
-		<ComponentRenderer node={node} breakpoint={breakpoint}>
-			{children}
-		</ComponentRenderer>
-	);
+  return (
+    <ComponentRenderer node={node} breakpoint={breakpoint}>
+      {children}
+    </ComponentRenderer>
+  );
 }
 
 /**
@@ -38,10 +41,10 @@ function NodeRenderer({ node, breakpoint }: NodeRendererProps) {
  * Page 객체를 받아서 컴포넌트 트리를 렌더링
  */
 interface PageRendererProps {
-	page: Page;
-	breakpoint: Breakpoint;
+  page: Page;
+  breakpoint: Breakpoint;
 }
 
 export function PageRenderer({ page, breakpoint }: PageRendererProps) {
-	return <NodeRenderer node={page.root} breakpoint={breakpoint} />;
+  return <NodeRenderer node={page.root} breakpoint={breakpoint} />;
 }

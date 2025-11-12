@@ -4,18 +4,18 @@ import type { EditorStore } from "@/types/editor";
 import { createPageSlice, type PageSlice } from "./slices/pageSlice";
 import { createNodeSlice, type NodeSlice } from "./slices/nodeSlice";
 import {
-	createSelectionSlice,
-	type SelectionSlice,
+  createSelectionSlice,
+  type SelectionSlice,
 } from "./slices/selectionSlice";
 import {
-	createViewportSlice,
-	type ViewportSlice,
+  createViewportSlice,
+  type ViewportSlice,
 } from "./slices/viewportSlice";
 import { createHistorySlice, type HistorySlice } from "./slices/historySlice";
 import { createUISlice, type UISlice } from "./slices/uiSlice";
 import {
-	createPersistenceSlice,
-	type PersistenceSlice,
+  createPersistenceSlice,
+  type PersistenceSlice,
 } from "./slices/persistenceSlice";
 
 /**
@@ -34,26 +34,26 @@ import {
  * Immer 미들웨어를 사용하여 불변성을 자동으로 처리합니다.
  */
 export const useEditorStore = create<EditorStore>()(
-	immer((...a) => ({
-		...createPageSlice(...a),
-		...createNodeSlice(...a),
-		...createSelectionSlice(...a),
-		...createViewportSlice(...a),
-		...createHistorySlice(...a),
-		...createUISlice(...a),
-		...createPersistenceSlice(...a),
-	})),
+  immer((...a) => ({
+    ...createPageSlice(...a),
+    ...createNodeSlice(...a),
+    ...createSelectionSlice(...a),
+    ...createViewportSlice(...a),
+    ...createHistorySlice(...a),
+    ...createUISlice(...a),
+    ...createPersistenceSlice(...a),
+  })),
 );
 
 /**
  * 타입 export (다른 파일에서 import 용)
  */
 export type {
-	PageSlice,
-	NodeSlice,
-	SelectionSlice,
-	ViewportSlice,
-	HistorySlice,
-	UISlice,
-	PersistenceSlice,
+  PageSlice,
+  NodeSlice,
+  SelectionSlice,
+  ViewportSlice,
+  HistorySlice,
+  UISlice,
+  PersistenceSlice,
 };

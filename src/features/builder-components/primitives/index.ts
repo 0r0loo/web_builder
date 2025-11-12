@@ -8,17 +8,17 @@ import { imageMetadata } from "./Image";
  * 모든 프리미티브 컴포넌트 메타데이터
  */
 const primitiveComponents = [
-	textMetadata,
-	buttonMetadata,
-	containerMetadata,
-	imageMetadata,
+  textMetadata,
+  buttonMetadata,
+  containerMetadata,
+  imageMetadata,
 ];
 
 /**
  * 프리미티브 컴포넌트 등록
  */
 export function registerPrimitiveComponents() {
-	registerComponents(primitiveComponents);
+  registerComponents(primitiveComponents);
 }
 
 /**
