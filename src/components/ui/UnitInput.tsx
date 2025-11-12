@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils/cn";
 
 interface UnitInputProps {
@@ -14,8 +14,9 @@ interface UnitInputProps {
 }
 
 /**
- * Unit Input 컴포넌트
+ * Unit Input 컴포넌트 (Fully Controlled)
  * 숫자 입력 + 단위 선택이 가능한 입력 필드
+ * react-hook-form과 완벽하게 호환되는 controlled component
  */
 export function UnitInput({
   value,
@@ -26,55 +27,38 @@ export function UnitInput({
   placeholder,
   allowEmpty = true,
 }: UnitInputProps) {
-  const [numValue, setNumValue] = useState("");
-  const [unit, setUnit] = useState("px");
-
-  // value 파싱 (예: "16px", "50%", "auto")
-  useEffect(() => {
+  // value를 파싱하여 numValue와 unit 추출 (메모이제이션)
+  const { numValue, unit } = useMemo(() => {
     if (value === undefined || value === "") {
-      if (numValue !== "" || unit !== (units[0] || "px")) {
-        setNumValue("");
-        setUnit(units[0] || "px");
-      }
-      return;
+      return { numValue: "", unit: units[0] || "px" };
     }
 
     const stringValue = String(value);
 
     // auto, inherit 등 키워드 값인 경우
     if (units.includes(stringValue)) {
-      if (numValue !== "" || unit !== stringValue) {
-        setNumValue("");
-        setUnit(stringValue);
-      }
-      return;
+      return { numValue: "", unit: stringValue };
     }
 
     // 숫자 + 단위 파싱
     const match = stringValue.match(/^(-?\d+(?:\.\d+)?)(px|%|rem|em|vw|vh|auto)?$/);
     if (match) {
-      const parsedNum = match[1];
-      const parsedUnit = match[2] || units[0] || "px";
-      if (numValue !== parsedNum || unit !== parsedUnit) {
-        setNumValue(parsedNum);
-        setUnit(parsedUnit);
-      }
-    } else {
-      if (numValue !== "" || unit !== (units[0] || "px")) {
-        setNumValue("");
-        setUnit(units[0] || "px");
-      }
+      return {
+        numValue: match[1],
+        unit: match[2] || units[0] || "px",
+      };
     }
-  }, [value, units, numValue, unit]);
 
-  // 값 변경 핸들러
-  const handleValueChange = (newValue: string, newUnit: string = unit) => {
-    setNumValue(newValue);
-    setUnit(newUnit);
+    return { numValue: "", unit: units[0] || "px" };
+  }, [value, units]);
+
+  // 텍스트 입력 변경
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
 
     // auto, inherit 등 키워드 단위인 경우
-    if (units.includes(newUnit) && ["auto", "inherit", "none"].includes(newUnit)) {
-      onChange(newUnit);
+    if (units.includes(unit) && ["auto", "inherit", "none"].includes(unit)) {
+      onChange(unit);
       return;
     }
 
@@ -89,27 +73,33 @@ export function UnitInput({
     // 숫자 + 단위
     const numericValue = Number.parseFloat(newValue);
     if (!Number.isNaN(numericValue)) {
-      onChange(`${numericValue}${newUnit}`);
+      onChange(`${numericValue}${unit}`);
+    } else if (allowEmpty) {
+      onChange("");
     }
-  };
-
-  // 텍스트 입력 변경
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    handleValueChange(newValue);
   };
 
   // 단위 변경
-  const handleUnitChange = (newUnit: string) => {
+  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newUnit = e.target.value;
+
     // auto, inherit 등 키워드 단위인 경우
     if (["auto", "inherit", "none"].includes(newUnit)) {
-      setNumValue("");
       onChange(newUnit);
-      setUnit(newUnit);
       return;
     }
 
-    handleValueChange(numValue, newUnit);
+    // 숫자가 있으면 숫자 + 새 단위
+    if (numValue && numValue !== "") {
+      const numericValue = Number.parseFloat(numValue);
+      if (!Number.isNaN(numericValue)) {
+        onChange(`${numericValue}${newUnit}`);
+        return;
+      }
+    }
+
+    // 숫자가 없으면 단위만 변경 (기본값 0)
+    onChange(`0${newUnit}`);
   };
 
   // auto 등 키워드 단위인지 확인
@@ -140,7 +130,7 @@ export function UnitInput({
         {/* 단위 선택 */}
         <select
           value={unit}
-          onChange={(e) => handleUnitChange(e.target.value)}
+          onChange={handleUnitChange}
           className="rounded border border-zinc-300 bg-white px-1.5 py-1 text-sm text-zinc-900 transition-colors focus:border-blue-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-blue-400"
         >
           {units.map((u) => (

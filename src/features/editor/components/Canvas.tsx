@@ -1,6 +1,5 @@
 "use client";
 
-import { useDroppable } from "@dnd-kit/core";
 import { useEditorStore } from "../store/editorStore";
 import { cn } from "@/lib/utils/cn";
 import { PageRenderer } from "@/features/renderer/PageRenderer";
@@ -8,19 +7,11 @@ import { PageRenderer } from "@/features/renderer/PageRenderer";
 /**
  * 에디터 캔버스
  * 페이지를 렌더링하고 드래그 앤 드롭으로 편집
+ * (root droppable은 PageRenderer의 Container가 담당)
  */
 export function Canvas() {
   const currentPage = useEditorStore((state) => state.getCurrentPage());
   const currentBreakpoint = useEditorStore((state) => state.currentBreakpoint);
-
-  // 루트 droppable 영역 설정
-  const { setNodeRef, isOver } = useDroppable({
-    id: currentPage?.root.id || "root",
-    data: {
-      type: "canvas-root",
-      accepts: ["component-library", "canvas-node"],
-    },
-  });
 
   if (!currentPage) {
     return (

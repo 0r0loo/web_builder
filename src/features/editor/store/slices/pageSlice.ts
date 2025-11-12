@@ -44,6 +44,8 @@ export const createPageSlice: StateCreator<EditorStore, [], [], PageSlice> = (
             border: "none",
             borderRadius: "0",
           },
+          tablet: {},
+          mobile: {},
         },
         children: [],
       },

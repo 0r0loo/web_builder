@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils/cn";
 
 interface FontSizeSliderProps {
@@ -15,8 +15,9 @@ const UNITS = ["px", "rem", "em"] as const;
 type Unit = (typeof UNITS)[number];
 
 /**
- * Font Size Slider 컴포넌트
+ * Font Size Slider 컴포넌트 (Fully Controlled)
  * 슬라이더, 텍스트 입력, 프리셋 버튼, 단위 선택 제공
+ * react-hook-form과 완벽하게 호환되는 controlled component
  */
 export function FontSizeSlider({
   value,
@@ -24,55 +25,54 @@ export function FontSizeSlider({
   label,
   className,
 }: FontSizeSliderProps) {
-  const [numValue, setNumValue] = useState(16);
-  const [unit, setUnit] = useState<Unit>("px");
-
-  // value 파싱 (예: "16px", "1.5rem")
-  useEffect(() => {
-    if (value) {
-      const match = value.match(/^(\d+(?:\.\d+)?)(px|rem|em)?$/);
-      if (match) {
-        setNumValue(Number.parseFloat(match[1]));
-        setUnit((match[2] as Unit) || "px");
-      }
+  // value를 파싱하여 숫자와 단위 추출 (메모이제이션)
+  const { numValue, unit } = useMemo(() => {
+    if (!value || value === "") {
+      return { numValue: 16, unit: "px" as Unit };
     }
+
+    const match = String(value).match(/^(\d+(?:\.\d+)?)(px|rem|em)?$/);
+    if (match) {
+      return {
+        numValue: Number.parseFloat(match[1]),
+        unit: (match[2] as Unit) || "px",
+      };
+    }
+
+    return { numValue: 16, unit: "px" as Unit };
   }, [value]);
 
-  // 값 변경 핸들러
-  const handleValueChange = (newValue: number, newUnit: Unit = unit) => {
-    setNumValue(newValue);
-    setUnit(newUnit);
-    onChange(`${newValue}${newUnit}`);
-  };
+  // 슬라이더 범위 (단위에 따라 조정)
+  const { sliderMin, sliderMax, sliderStep } = useMemo(() => {
+    if (unit === "px") {
+      return { sliderMin: 8, sliderMax: 96, sliderStep: 1 };
+    }
+    return { sliderMin: 0.5, sliderMax: 6, sliderStep: 0.1 };
+  }, [unit]);
 
   // 슬라이더 변경
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number.parseInt(e.target.value, 10);
-    handleValueChange(newValue);
+    const newValue = Number.parseFloat(e.target.value);
+    onChange(`${newValue}${unit}`);
   };
 
   // 텍스트 입력 변경
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number.parseFloat(e.target.value);
     if (!Number.isNaN(newValue) && newValue > 0) {
-      handleValueChange(newValue);
+      onChange(`${newValue}${unit}`);
     }
   };
 
   // 프리셋 버튼 클릭
   const handlePresetClick = (presetValue: number) => {
-    handleValueChange(presetValue);
+    onChange(`${presetValue}${unit}`);
   };
 
   // 단위 변경
   const handleUnitChange = (newUnit: Unit) => {
-    handleValueChange(numValue, newUnit);
+    onChange(`${numValue}${newUnit}`);
   };
-
-  // 슬라이더 범위 (단위에 따라 조정)
-  const sliderMax = unit === "px" ? 96 : 6;
-  const sliderMin = unit === "px" ? 8 : 0.5;
-  const sliderStep = unit === "px" ? 1 : 0.1;
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>

@@ -12,15 +12,21 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Button, IconButton } from "@/components/ui/buttons";
+import { PageTabs } from "./PageTabs";
 
 /**
  * 에디터 상단 헤더
- * - 페이지 이름
+ * - 페이지 탭 (페이지 전환)
  * - 반응형 브레이크포인트 전환
  * - Undo/Redo
  * - 저장/발행 버튼
  */
 export function EditorHeader() {
+  const pages = useEditorStore((state) => state.pages);
+  const currentPageId = useEditorStore((state) => state.currentPageId);
+  const setCurrentPage = useEditorStore((state) => state.setCurrentPage);
+  const createPage = useEditorStore((state) => state.createPage);
+  const deletePage = useEditorStore((state) => state.deletePage);
   const currentPage = useEditorStore((state) => state.getCurrentPage());
   const currentBreakpoint = useEditorStore((state) => state.currentBreakpoint);
   const setBreakpoint = useEditorStore((state) => state.setBreakpoint);
@@ -75,89 +81,109 @@ export function EditorHeader() {
     window.open(`/preview/${currentPage.id}`, "_blank");
   };
 
+  // 새 페이지 추가
+  const handleAddPage = () => {
+    const pageNumber = pages.length + 1;
+    createPage({ name: `페이지 ${pageNumber}` });
+  };
+
   return (
-    <header className="flex h-14 items-center justify-between border-b border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900">
-      {/* 좌측: 페이지 이름 */}
-      <div className="flex items-center gap-3">
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          {currentPage?.name || "Web Builder"}
-        </h1>
-      </div>
+    <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      {/* 페이지 탭 */}
+      {currentPageId && (
+        <PageTabs
+          pages={pages}
+          currentPageId={currentPageId}
+          onPageClick={setCurrentPage}
+          onAddPage={handleAddPage}
+          onDeletePage={deletePage}
+        />
+      )}
 
-      {/* 중앙: 브레이크포인트 전환 */}
-      <div className="flex items-center gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
-        <IconButton
-          icon={<Smartphone className="h-4 w-4" />}
-          onClick={() => setBreakpoint("mobile")}
-          active={currentBreakpoint === "mobile"}
-          title="모바일 (< 768px)"
-          className={cn(
-            currentBreakpoint === "mobile" &&
-              "bg-white shadow-sm dark:bg-zinc-700",
-          )}
-        />
-        <IconButton
-          icon={<Tablet className="h-4 w-4" />}
-          onClick={() => setBreakpoint("tablet")}
-          active={currentBreakpoint === "tablet"}
-          title="태블릿 (768px - 1023px)"
-          className={cn(
-            currentBreakpoint === "tablet" &&
-              "bg-white shadow-sm dark:bg-zinc-700",
-          )}
-        />
-        <IconButton
-          icon={<Monitor className="h-4 w-4" />}
-          onClick={() => setBreakpoint("desktop")}
-          active={currentBreakpoint === "desktop"}
-          title="데스크톱 (>= 1024px)"
-          className={cn(
-            currentBreakpoint === "desktop" &&
-              "bg-white shadow-sm dark:bg-zinc-700",
-          )}
-        />
-      </div>
+      {/* 메인 헤더 */}
+      <div className="flex h-14 items-center justify-between px-4">
+        {/* 좌측: 프로젝트 이름 */}
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+            Web Builder
+          </h1>
+        </div>
 
-      {/* 우측: Undo/Redo 및 액션 버튼 */}
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1">
+        {/* 중앙: 브레이크포인트 전환 */}
+        <div className="flex items-center gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
           <IconButton
-            icon={<Undo2 className="h-4 w-4" />}
-            onClick={undo}
-            disabled={!canUndo}
-            title="실행 취소 (Ctrl+Z)"
+            icon={<Smartphone className="h-4 w-4" />}
+            onClick={() => setBreakpoint("mobile")}
+            active={currentBreakpoint === "mobile"}
+            title="모바일 (< 768px)"
+            className={cn(
+              currentBreakpoint === "mobile" &&
+                "bg-white shadow-sm dark:bg-zinc-700",
+            )}
           />
           <IconButton
-            icon={<Redo2 className="h-4 w-4" />}
-            onClick={redo}
-            disabled={!canRedo}
-            title="다시 실행 (Ctrl+Shift+Z)"
+            icon={<Tablet className="h-4 w-4" />}
+            onClick={() => setBreakpoint("tablet")}
+            active={currentBreakpoint === "tablet"}
+            title="태블릿 (768px - 1023px)"
+            className={cn(
+              currentBreakpoint === "tablet" &&
+                "bg-white shadow-sm dark:bg-zinc-700",
+            )}
+          />
+          <IconButton
+            icon={<Monitor className="h-4 w-4" />}
+            onClick={() => setBreakpoint("desktop")}
+            active={currentBreakpoint === "desktop"}
+            title="데스크톱 (>= 1024px)"
+            className={cn(
+              currentBreakpoint === "desktop" &&
+                "bg-white shadow-sm dark:bg-zinc-700",
+            )}
           />
         </div>
 
-        <div className="ml-2 h-6 w-px bg-zinc-200 dark:bg-zinc-700" />
+        {/* 우측: Undo/Redo 및 액션 버튼 */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <IconButton
+              icon={<Undo2 className="h-4 w-4" />}
+              onClick={undo}
+              disabled={!canUndo}
+              title="실행 취소 (Ctrl+Z)"
+            />
+            <IconButton
+              icon={<Redo2 className="h-4 w-4" />}
+              onClick={redo}
+              disabled={!canRedo}
+              title="다시 실행 (Ctrl+Shift+Z)"
+            />
+          </div>
 
-        <div className="flex items-center gap-1">
-          <IconButton
-            icon={<Download className="h-4 w-4" />}
-            onClick={handleExport}
-            title="프로젝트 내보내기 (JSON)"
-          />
-          <IconButton
-            icon={<Upload className="h-4 w-4" />}
-            onClick={handleImport}
-            title="프로젝트 가져오기 (JSON)"
-          />
+          <div className="ml-2 h-6 w-px bg-zinc-200 dark:bg-zinc-700" />
+
+          <div className="flex items-center gap-1">
+            <IconButton
+              icon={<Download className="h-4 w-4" />}
+              onClick={handleExport}
+              title="프로젝트 내보내기 (JSON)"
+            />
+            <IconButton
+              icon={<Upload className="h-4 w-4" />}
+              onClick={handleImport}
+              title="프로젝트 가져오기 (JSON)"
+            />
+          </div>
+
+          <div className="ml-2 h-6 w-px bg-zinc-200 dark:bg-zinc-700" />
+
+          <Button variant="secondary" size="md" onClick={handlePreview}>
+            미리보기
+          </Button>
+          <Button variant="primary" size="md">
+            발행
+          </Button>
         </div>
-
-        <div className="ml-2 h-6 w-px bg-zinc-200 dark:bg-zinc-700" />
-
-        <Button variant="secondary" size="md" onClick={handlePreview}>
-          미리보기
-        </Button>
-        <Button variant="primary" size="md">
-          발행
-        </Button>
       </div>
     </header>
   );
