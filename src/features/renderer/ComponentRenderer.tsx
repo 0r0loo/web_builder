@@ -11,6 +11,7 @@ import { Text } from "@/features/builder-components/primitives/Text";
 import { Button } from "@/features/builder-components/primitives/Button";
 import { Container } from "@/features/builder-components/primitives/Container";
 import { Image } from "@/features/builder-components/primitives/Image";
+import { Link } from "@/features/builder-components/primitives/Link";
 import { cn } from "@/lib/utils/cn";
 import { useEditorStore } from "@/features/editor/store/editorStore";
 import type { CSSProperties } from "react";
@@ -33,6 +34,7 @@ const componentMap: Partial<
   button: Button,
   container: Container,
   image: Image,
+  link: Link,
 };
 
 /**

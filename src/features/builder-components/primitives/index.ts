@@ -3,6 +3,7 @@ import { textMetadata } from "./Text";
 import { buttonMetadata } from "./Button";
 import { containerMetadata } from "./Container";
 import { imageMetadata } from "./Image";
+import { linkMetadata } from "./Link";
 
 /**
  * 모든 프리미티브 컴포넌트 메타데이터
@@ -12,6 +13,7 @@ const primitiveComponents = [
   buttonMetadata,
   containerMetadata,
   imageMetadata,
+  linkMetadata,
 ];
 
 /**
@@ -28,3 +30,4 @@ export { Text, textMetadata } from "./Text";
 export { Button, buttonMetadata } from "./Button";
 export { Container, containerMetadata } from "./Container";
 export { Image, imageMetadata } from "./Image";
+export { Link, linkMetadata } from "./Link";

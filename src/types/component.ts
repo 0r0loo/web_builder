@@ -19,7 +19,12 @@ export type ComponentType =
 /**
  * 컴포넌트 라이브러리에서의 분류 카테고리
  */
-export type ComponentCategory = "layout" | "content" | "media" | "form";
+export type ComponentCategory =
+  | "layout"
+  | "typography"
+  | "media"
+  | "form"
+  | "navigation";
 
 /**
  * 반응형 디자인 브레이크포인트
