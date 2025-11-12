@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
-import type { EditorStore, EditorMode } from "@/types/editor";
 import type { Breakpoint } from "@/types/component";
+import type { EditorMode, EditorStore } from "@/types/editor";
 
 /**
  * 뷰포트 및 에디터 모드 관리 슬라이스

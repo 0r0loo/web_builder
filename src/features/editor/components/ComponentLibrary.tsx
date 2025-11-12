@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useState } from "react";
+import { registerPrimitiveComponents } from "@/features/builder-components/primitives";
 import {
   getComponentsGroupedByCategory,
   getRegistrySize,
 } from "@/features/builder-components/registry";
-import { registerPrimitiveComponents } from "@/features/builder-components/primitives";
 import type {
-  ComponentMetadata,
   ComponentCategory,
+  ComponentMetadata,
 } from "@/features/builder-components/types";
 
 /**

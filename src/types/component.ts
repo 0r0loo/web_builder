@@ -46,7 +46,7 @@ export interface ResponsiveStyles {
 export interface ComponentNode {
   id: string;
   type: ComponentType;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
   styles: ResponsiveStyles;
   children?: ComponentNode[];
 }
@@ -58,8 +58,8 @@ export interface PropDefinition {
   name: string;
   label: string;
   type: "text" | "number" | "color" | "select" | "boolean" | "textarea";
-  defaultValue: any;
-  options?: Array<{ label: string; value: any }>;
+  defaultValue: unknown;
+  options?: Array<{ label: string; value: unknown }>;
 }
 
 /**
@@ -70,11 +70,11 @@ export interface ComponentDefinition {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   category: ComponentCategory;
-  defaultProps: Record<string, any>;
+  defaultProps: Record<string, unknown>;
   defaultStyles: ResponsiveStyles;
   editableProps: PropDefinition[];
   render: (
-    props: any,
+    props: Record<string, unknown>,
     styles: React.CSSProperties,
     children?: React.ReactNode,
   ) => React.ReactNode;

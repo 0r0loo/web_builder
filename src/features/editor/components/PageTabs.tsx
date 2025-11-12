@@ -1,9 +1,9 @@
 "use client";
 
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import { X, Plus } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import type { Page } from "@/features/editor/store/editorStore";
+import type { Page } from "@/types/editor";
 
 interface PageTabsProps {
   pages: Page[];
@@ -26,10 +26,7 @@ export function PageTabs({
 }: PageTabsProps) {
   const [hoveredPageId, setHoveredPageId] = useState<string | null>(null);
 
-  const handleDeleteClick = (
-    e: React.MouseEvent,
-    pageId: string,
-  ) => {
+  const handleDeleteClick = (e: React.MouseEvent, pageId: string) => {
     e.stopPropagation();
 
     // 마지막 페이지는 삭제 불가
@@ -41,8 +38,7 @@ export function PageTabs({
     // 현재 페이지 삭제 시 다른 페이지로 전환
     if (pageId === currentPageId) {
       const currentIndex = pages.findIndex((p) => p.id === pageId);
-      const nextPage =
-        pages[currentIndex + 1] || pages[currentIndex - 1];
+      const nextPage = pages[currentIndex + 1] || pages[currentIndex - 1];
       if (nextPage) {
         onPageClick(nextPage.id);
       }
@@ -76,9 +72,7 @@ export function PageTabs({
               <span className="text-base">📄</span>
 
               {/* 페이지 이름 */}
-              <span className="flex-1 truncate text-left">
-                {page.name}
-              </span>
+              <span className="flex-1 truncate text-left">{page.name}</span>
 
               {/* 삭제 버튼 */}
               {(isHovered || isActive) && pages.length > 1 && (

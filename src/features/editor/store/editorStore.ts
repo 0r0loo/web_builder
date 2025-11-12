@@ -1,22 +1,22 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { EditorStore } from "@/types/editor";
-import { createPageSlice, type PageSlice } from "./slices/pageSlice";
-import { createNodeSlice, type NodeSlice } from "./slices/nodeSlice";
-import {
-  createSelectionSlice,
-  type SelectionSlice,
-} from "./slices/selectionSlice";
-import {
-  createViewportSlice,
-  type ViewportSlice,
-} from "./slices/viewportSlice";
 import { createHistorySlice, type HistorySlice } from "./slices/historySlice";
-import { createUISlice, type UISlice } from "./slices/uiSlice";
+import { createNodeSlice, type NodeSlice } from "./slices/nodeSlice";
+import { createPageSlice, type PageSlice } from "./slices/pageSlice";
 import {
   createPersistenceSlice,
   type PersistenceSlice,
 } from "./slices/persistenceSlice";
+import {
+  createSelectionSlice,
+  type SelectionSlice,
+} from "./slices/selectionSlice";
+import { createUISlice, type UISlice } from "./slices/uiSlice";
+import {
+  createViewportSlice,
+  type ViewportSlice,
+} from "./slices/viewportSlice";
 
 /**
  * 웹 빌더 에디터의 전역 상태 관리 스토어 (UI 상태만)

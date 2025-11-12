@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { Page } from "@/types/page";
 
 /**
@@ -29,7 +29,7 @@ export function usePageData(pageId: string) {
 
       setPage(foundPage);
       setLoading(false);
-    } catch (err) {
+    } catch (_err) {
       setError("페이지를 불러오는 중 오류가 발생했습니다.");
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-import type { Page, NewPage } from "@/lib/db/schema";
+import type { NewPage, Page } from "@/lib/db/schema";
 
 /**
  * Pages API Client

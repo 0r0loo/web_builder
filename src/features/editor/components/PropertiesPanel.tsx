@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useEditorStore } from "../store/editorStore";
-import { findNodeById } from "@/lib/utils/tree";
-import { getComponent } from "@/features/builder-components/registry";
-import { Monitor, Tablet, Smartphone, ChevronDown } from "lucide-react";
+import { ChevronDown, Monitor, Smartphone, Tablet } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/buttons";
-import { Input, Label, Textarea, Select } from "@/components/ui/forms";
 import { ColorPicker } from "@/components/ui/ColorPicker";
 import { FontSizeSlider } from "@/components/ui/FontSizeSlider";
+import { Input, Label, Select, Textarea } from "@/components/ui/forms";
 import { UnitInput } from "@/components/ui/UnitInput";
-import { useDebouncedForm } from "@/hooks/useDebouncedForm";
-import { Controller } from "react-hook-form";
+import { getComponent } from "@/features/builder-components/registry";
+import { findNodeById } from "@/lib/utils/tree";
+import type { Action } from "@/types/action";
 import type { ComponentNode } from "@/types/component";
+import { useEditorStore } from "../store/editorStore";
 
 /**
  * 속성 패널
@@ -121,7 +120,7 @@ export function PropertiesPanel() {
 }
 
 /**
- * Props 편집기 (react-hook-form 사용)
+ * Props 편집기 (Controlled Components)
  */
 interface PropsEditorProps {
   node: ComponentNode;
@@ -134,19 +133,15 @@ interface PropsEditorProps {
 function PropsEditor({ node, updateNode }: PropsEditorProps) {
   const pages = useEditorStore((state) => state.pages);
 
-  // react-hook-form 설정
-  const { control, reset } = useDebouncedForm<Record<string, unknown>>({
-    defaultValues: node.props,
-    onSubmit: (data) => {
-      updateNode(node.id, { props: data });
-    },
-    debounceMs: 300,
-  });
-
-  // node.props가 변경되면 폼 리셋
-  useEffect(() => {
-    reset(node.props);
-  }, [node.id, reset]); // node.id 변경 시에만 리셋
+  // Props 업데이트 헬퍼 함수
+  const handlePropChange = (key: string, value: unknown) => {
+    updateNode(node.id, {
+      props: {
+        ...node.props,
+        [key]: value,
+      },
+    });
+  };
 
   // Link 타입 결정 (내부 페이지 또는 외부 URL)
   const linkType =
@@ -167,17 +162,11 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
         {node.type === "text" && (
           <div>
             <Label htmlFor="prop-content">텍스트 내용</Label>
-            <Controller
-              name="content"
-              control={control}
-              render={({ field }) => (
-                <Textarea
-                  id="prop-content"
-                  value={(field.value as string) || ""}
-                  onChange={field.onChange}
-                  rows={3}
-                />
-              )}
+            <Textarea
+              id="prop-content"
+              value={(node.props.content as string) || ""}
+              onChange={(e) => handlePropChange("content", e.target.value)}
+              rows={3}
             />
           </div>
         )}
@@ -187,36 +176,31 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
           <>
             <div>
               <Label htmlFor="prop-text">버튼 텍스트</Label>
-              <Controller
-                name="text"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="prop-text"
-                    value={(field.value as string) || ""}
-                    onChange={field.onChange}
-                  />
-                )}
+              <Input
+                id="prop-text"
+                value={(node.props.text as string) || ""}
+                onChange={(e) => handlePropChange("text", e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor="prop-variant">스타일 변형</Label>
-              <Controller
-                name="variant"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    id="prop-variant"
-                    value={(field.value as string) || "primary"}
-                    onChange={field.onChange}
-                  >
-                    <option value="primary">Primary</option>
-                    <option value="secondary">Secondary</option>
-                    <option value="outline">Outline</option>
-                  </Select>
-                )}
-              />
+              <Select
+                id="prop-variant"
+                value={(node.props.variant as string) || "primary"}
+                onChange={(e) => handlePropChange("variant", e.target.value)}
+              >
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+                <option value="outline">Outline</option>
+              </Select>
             </div>
+
+            {/* Button Action 설정 */}
+            <ButtonActionEditor
+              pages={pages}
+              node={node}
+              updateNode={updateNode}
+            />
           </>
         )}
 
@@ -232,54 +216,36 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
           <>
             <div>
               <Label htmlFor="prop-src">이미지 URL</Label>
-              <Controller
-                name="src"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="prop-src"
-                    type="url"
-                    value={(field.value as string) || ""}
-                    onChange={field.onChange}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                )}
+              <Input
+                id="prop-src"
+                type="url"
+                value={(node.props.src as string) || ""}
+                onChange={(e) => handlePropChange("src", e.target.value)}
+                placeholder="https://example.com/image.jpg"
               />
             </div>
             <div>
               <Label htmlFor="prop-alt">대체 텍스트 (Alt)</Label>
-              <Controller
-                name="alt"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="prop-alt"
-                    value={(field.value as string) || ""}
-                    onChange={field.onChange}
-                    placeholder="이미지 설명"
-                  />
-                )}
+              <Input
+                id="prop-alt"
+                value={(node.props.alt as string) || ""}
+                onChange={(e) => handlePropChange("alt", e.target.value)}
+                placeholder="이미지 설명"
               />
             </div>
             <div>
               <Label htmlFor="prop-objectFit">Object Fit</Label>
-              <Controller
-                name="objectFit"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    id="prop-objectFit"
-                    value={(field.value as string) || "cover"}
-                    onChange={field.onChange}
-                  >
-                    <option value="cover">Cover</option>
-                    <option value="contain">Contain</option>
-                    <option value="fill">Fill</option>
-                    <option value="none">None</option>
-                    <option value="scale-down">Scale Down</option>
-                  </Select>
-                )}
-              />
+              <Select
+                id="prop-objectFit"
+                value={(node.props.objectFit as string) || "cover"}
+                onChange={(e) => handlePropChange("objectFit", e.target.value)}
+              >
+                <option value="cover">Cover</option>
+                <option value="contain">Contain</option>
+                <option value="fill">Fill</option>
+                <option value="none">None</option>
+                <option value="scale-down">Scale Down</option>
+              </Select>
             </div>
           </>
         )}
@@ -289,17 +255,11 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
           <>
             <div>
               <Label htmlFor="prop-text">링크 텍스트</Label>
-              <Controller
-                name="text"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="prop-text"
-                    value={(field.value as string) || ""}
-                    onChange={field.onChange}
-                    placeholder="링크"
-                  />
-                )}
+              <Input
+                id="prop-text"
+                value={(node.props.text as string) || ""}
+                onChange={(e) => handlePropChange("text", e.target.value)}
+                placeholder="링크"
               />
             </div>
 
@@ -315,7 +275,6 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
                     value="internal"
                     checked={linkType === "internal"}
                     onChange={() => {
-                      // 외부 URL 제거, 첫 번째 페이지로 설정
                       updateNode(node.id, {
                         props: {
                           ...node.props,
@@ -339,7 +298,6 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
                     value="external"
                     checked={linkType === "external"}
                     onChange={() => {
-                      // 페이지 ID 제거
                       updateNode(node.id, {
                         props: {
                           ...node.props,
@@ -361,24 +319,18 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
             {linkType === "internal" && (
               <div>
                 <Label htmlFor="prop-pageId">대상 페이지</Label>
-                <Controller
-                  name="pageId"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      id="prop-pageId"
-                      value={(field.value as string) || ""}
-                      onChange={field.onChange}
-                    >
-                      <option value="">페이지 선택...</option>
-                      {pages.map((page) => (
-                        <option key={page.id} value={page.id}>
-                          {page.name}
-                        </option>
-                      ))}
-                    </Select>
-                  )}
-                />
+                <Select
+                  id="prop-pageId"
+                  value={(node.props.pageId as string) || ""}
+                  onChange={(e) => handlePropChange("pageId", e.target.value)}
+                >
+                  <option value="">페이지 선택...</option>
+                  {pages.map((page) => (
+                    <option key={page.id} value={page.id}>
+                      {page.name}
+                    </option>
+                  ))}
+                </Select>
               </div>
             )}
 
@@ -386,18 +338,12 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
             {linkType === "external" && (
               <div>
                 <Label htmlFor="prop-href">외부 URL</Label>
-                <Controller
-                  name="href"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      id="prop-href"
-                      type="url"
-                      value={(field.value as string) || ""}
-                      onChange={field.onChange}
-                      placeholder="https://example.com"
-                    />
-                  )}
+                <Input
+                  id="prop-href"
+                  type="url"
+                  value={(node.props.href as string) || ""}
+                  onChange={(e) => handlePropChange("href", e.target.value)}
+                  placeholder="https://example.com"
                 />
               </div>
             )}
@@ -405,20 +351,14 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
             {/* Target 선택 */}
             <div>
               <Label htmlFor="prop-target">링크 열기</Label>
-              <Controller
-                name="target"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    id="prop-target"
-                    value={(field.value as string) || "_self"}
-                    onChange={field.onChange}
-                  >
-                    <option value="_self">같은 탭에서 열기</option>
-                    <option value="_blank">새 탭에서 열기</option>
-                  </Select>
-                )}
-              />
+              <Select
+                id="prop-target"
+                value={(node.props.target as string) || "_self"}
+                onChange={(e) => handlePropChange("target", e.target.value)}
+              >
+                <option value="_self">같은 탭에서 열기</option>
+                <option value="_blank">새 탭에서 열기</option>
+              </Select>
             </div>
           </>
         )}
@@ -428,7 +368,213 @@ function PropsEditor({ node, updateNode }: PropsEditorProps) {
 }
 
 /**
- * Styles 편집기 (react-hook-form 사용)
+ * Button Action 편집기 (Controlled Components)
+ */
+interface ButtonActionEditorProps {
+  pages: { id: string; name: string }[];
+  node: ComponentNode;
+  updateNode: (
+    nodeId: string,
+    updates: Partial<Omit<ComponentNode, "id">>,
+  ) => void;
+}
+
+function ButtonActionEditor({
+  pages,
+  node,
+  updateNode,
+}: ButtonActionEditorProps) {
+  const action = node.props.action as Action | undefined;
+  const actionType = action?.type || "none";
+  const linkType = action?.type === "link" ? action.linkType : "internal";
+
+  const handleActionChange = (newAction: Action) => {
+    updateNode(node.id, {
+      props: {
+        ...node.props,
+        action: newAction,
+      },
+    });
+  };
+
+  return (
+    <div className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
+      <Label className="mb-2 block">버튼 동작</Label>
+
+      {/* Action Type 선택 */}
+      <div className="mb-3">
+        <Select
+          value={actionType}
+          onChange={(e) => {
+            const newType = e.target.value as Action["type"];
+
+            if (newType === "none") {
+              handleActionChange({ type: "none" });
+            } else if (newType === "link") {
+              handleActionChange({
+                type: "link",
+                linkType: "internal",
+                pageId: pages[0]?.id || "",
+                target: "_self",
+              });
+            }
+          }}
+        >
+          <option value="none">동작 없음</option>
+          <option value="link">페이지 이동</option>
+          <option value="modal" disabled>
+            모달 열기 (준비중)
+          </option>
+          <option value="api" disabled>
+            API 요청 (준비중)
+          </option>
+          <option value="custom" disabled>
+            커스텀 스크립트 (준비중)
+          </option>
+        </Select>
+      </div>
+
+      {/* Link Action 설정 */}
+      {actionType === "link" && (
+        <div className="space-y-3">
+          {/* 링크 타입 선택 (내부/외부) */}
+          <div className="rounded-lg border border-zinc-200 p-2 dark:border-zinc-700">
+            <div className="space-y-2">
+              {/* 내부 페이지 라디오 */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="action-link-type"
+                  value="internal"
+                  checked={linkType === "internal"}
+                  onChange={() => {
+                    handleActionChange({
+                      type: "link",
+                      linkType: "internal",
+                      pageId: pages[0]?.id || "",
+                      target: "_self",
+                    });
+                  }}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                  내부 페이지
+                </span>
+              </label>
+
+              {/* 외부 URL 라디오 */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="action-link-type"
+                  value="external"
+                  checked={linkType === "external"}
+                  onChange={() => {
+                    handleActionChange({
+                      type: "link",
+                      linkType: "external",
+                      href: "https://",
+                      target: "_self",
+                    });
+                  }}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                  외부 URL
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {/* 내부 페이지 선택 */}
+          {linkType === "internal" && (
+            <div>
+              <Label htmlFor="action-pageId">대상 페이지</Label>
+              <Select
+                id="action-pageId"
+                value={
+                  action?.type === "link" && action.linkType === "internal"
+                    ? action.pageId || ""
+                    : ""
+                }
+                onChange={(e) => {
+                  handleActionChange({
+                    type: "link",
+                    linkType: "internal",
+                    pageId: e.target.value,
+                    target: action?.type === "link" ? action.target : "_self",
+                  });
+                }}
+              >
+                <option value="">페이지 선택...</option>
+                {pages.map((page) => (
+                  <option key={page.id} value={page.id}>
+                    {page.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          )}
+
+          {/* 외부 URL 입력 */}
+          {linkType === "external" && (
+            <div>
+              <Label htmlFor="action-href">외부 URL</Label>
+              <Input
+                id="action-href"
+                type="url"
+                value={
+                  action?.type === "link" && action.linkType === "external"
+                    ? action.href || ""
+                    : ""
+                }
+                onChange={(e) => {
+                  handleActionChange({
+                    type: "link",
+                    linkType: "external",
+                    href: e.target.value,
+                    target: action?.type === "link" ? action.target : "_self",
+                  });
+                }}
+                placeholder="https://example.com"
+              />
+            </div>
+          )}
+
+          {/* Target 선택 */}
+          <div>
+            <Label htmlFor="action-target">링크 열기</Label>
+            <Select
+              id="action-target"
+              value={
+                action?.type === "link" ? action.target || "_self" : "_self"
+              }
+              onChange={(e) => {
+                const currentAction = action as
+                  | Extract<Action, { type: "link" }>
+                  | undefined;
+                handleActionChange({
+                  type: "link",
+                  linkType: currentAction?.linkType || "internal",
+                  ...(currentAction?.linkType === "internal"
+                    ? { pageId: currentAction?.pageId || "" }
+                    : { href: currentAction?.href || "" }),
+                  target: e.target.value as "_self" | "_blank",
+                });
+              }}
+            >
+              <option value="_self">같은 탭에서 열기</option>
+              <option value="_blank">새 탭에서 열기</option>
+            </Select>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Styles 편집기 (Controlled Components)
  */
 interface StylesEditorProps {
   node: ComponentNode;
@@ -462,23 +608,18 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
     }));
   };
 
-  // react-hook-form 설정
-  const { control, reset } = useDebouncedForm<Record<string, unknown>>({
-    defaultValues: currentStyles,
-    onSubmit: (data) => {
-      updateNode(node.id, {
-        styles: {
-          [currentBreakpoint]: data,
+  // Style 업데이트 헬퍼 함수
+  const handleStyleChange = (key: string, value: string) => {
+    updateNode(node.id, {
+      styles: {
+        ...node.styles,
+        [currentBreakpoint]: {
+          ...currentStyles,
+          [key]: value,
         },
-      });
-    },
-    debounceMs: 300,
-  });
-
-  // currentStyles가 변경되면 폼 리셋
-  useEffect(() => {
-    reset(currentStyles);
-  }, [currentBreakpoint, node.id, reset]); // breakpoint 또는 node.id 변경 시에만 리셋
+      },
+    });
+  };
 
   // 브레이크포인트별 아이콘 및 라벨
   const breakpointInfo = {
@@ -513,132 +654,86 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.layout}
           onToggle={() => toggleCategory("layout")}
         >
-          <Controller
-            name="display"
-            control={control}
-            render={({ field }) => (
-              <StyleSelect
-                label="Display"
-                value={field.value || "flex"}
-                onChange={field.onChange}
-                options={[
-                  { value: "flex", label: "Flex" },
-                  { value: "block", label: "Block" },
-                  { value: "inline-block", label: "Inline Block" },
-                  { value: "grid", label: "Grid" },
-                  { value: "inline-flex", label: "Inline Flex" },
-                  { value: "inline", label: "Inline" },
-                  { value: "none", label: "None" },
-                ]}
-              />
-            )}
+          <StyleSelect
+            label="Display"
+            value={currentStyles.display || "flex"}
+            onChange={(value) => handleStyleChange("display", value)}
+            options={[
+              { value: "flex", label: "Flex" },
+              { value: "block", label: "Block" },
+              { value: "inline-block", label: "Inline Block" },
+              { value: "grid", label: "Grid" },
+              { value: "inline-flex", label: "Inline Flex" },
+              { value: "inline", label: "Inline" },
+              { value: "none", label: "None" },
+            ]}
           />
-          <Controller
-            name="flexDirection"
-            control={control}
-            render={({ field }) => (
-              <StyleSelect
-                label="Flex Direction"
-                value={field.value || "row"}
-                onChange={field.onChange}
-                options={[
-                  { value: "row", label: "Row" },
-                  { value: "row-reverse", label: "Row Reverse" },
-                  { value: "column", label: "Column" },
-                  { value: "column-reverse", label: "Column Reverse" },
-                ]}
-              />
-            )}
+          <StyleSelect
+            label="Flex Direction"
+            value={currentStyles.flexDirection || "row"}
+            onChange={(value) => handleStyleChange("flexDirection", value)}
+            options={[
+              { value: "row", label: "Row" },
+              { value: "row-reverse", label: "Row Reverse" },
+              { value: "column", label: "Column" },
+              { value: "column-reverse", label: "Column Reverse" },
+            ]}
           />
-          <Controller
-            name="justifyContent"
-            control={control}
-            render={({ field }) => (
-              <StyleSelect
-                label="Justify Content"
-                value={field.value || "flex-start"}
-                onChange={field.onChange}
-                options={[
-                  { value: "flex-start", label: "Flex Start" },
-                  { value: "flex-end", label: "Flex End" },
-                  { value: "center", label: "Center" },
-                  { value: "space-between", label: "Space Between" },
-                  { value: "space-around", label: "Space Around" },
-                  { value: "space-evenly", label: "Space Evenly" },
-                ]}
-              />
-            )}
+          <StyleSelect
+            label="Justify Content"
+            value={currentStyles.justifyContent || "flex-start"}
+            onChange={(value) => handleStyleChange("justifyContent", value)}
+            options={[
+              { value: "flex-start", label: "Flex Start" },
+              { value: "flex-end", label: "Flex End" },
+              { value: "center", label: "Center" },
+              { value: "space-between", label: "Space Between" },
+              { value: "space-around", label: "Space Around" },
+              { value: "space-evenly", label: "Space Evenly" },
+            ]}
           />
-          <Controller
-            name="alignItems"
-            control={control}
-            render={({ field }) => (
-              <StyleSelect
-                label="Align Items"
-                value={field.value || "flex-start"}
-                onChange={field.onChange}
-                options={[
-                  { value: "flex-start", label: "Flex Start" },
-                  { value: "flex-end", label: "Flex End" },
-                  { value: "center", label: "Center" },
-                  { value: "stretch", label: "Stretch" },
-                  { value: "baseline", label: "Baseline" },
-                ]}
-              />
-            )}
+          <StyleSelect
+            label="Align Items"
+            value={currentStyles.alignItems || "flex-start"}
+            onChange={(value) => handleStyleChange("alignItems", value)}
+            options={[
+              { value: "flex-start", label: "Flex Start" },
+              { value: "flex-end", label: "Flex End" },
+              { value: "center", label: "Center" },
+              { value: "stretch", label: "Stretch" },
+              { value: "baseline", label: "Baseline" },
+            ]}
           />
-          <Controller
-            name="flexWrap"
-            control={control}
-            render={({ field }) => (
-              <StyleSelect
-                label="Flex Wrap"
-                value={field.value || "wrap"}
-                onChange={field.onChange}
-                options={[
-                  { value: "wrap", label: "Wrap (줄바꿈)" },
-                  { value: "nowrap", label: "No Wrap (한 줄 유지)" },
-                  { value: "wrap-reverse", label: "Wrap Reverse (역순)" },
-                ]}
-              />
-            )}
+          <StyleSelect
+            label="Flex Wrap"
+            value={currentStyles.flexWrap || "wrap"}
+            onChange={(value) => handleStyleChange("flexWrap", value)}
+            options={[
+              { value: "wrap", label: "Wrap (줄바꿈)" },
+              { value: "nowrap", label: "No Wrap (한 줄 유지)" },
+              { value: "wrap-reverse", label: "Wrap Reverse (역순)" },
+            ]}
           />
-          <Controller
-            name="gap"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Gap"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "rem", "em"]}
-                placeholder="16"
-              />
-            )}
+          <UnitInput
+            label="Gap"
+            value={currentStyles.gap}
+            onChange={(value) => handleStyleChange("gap", value)}
+            units={["px", "rem", "em"]}
+            placeholder="16"
           />
-          <Controller
-            name="gridTemplateColumns"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Grid Template Columns"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="repeat(3, 1fr)"
-              />
-            )}
+          <StyleInput
+            label="Grid Template Columns"
+            value={currentStyles.gridTemplateColumns}
+            onChange={(value) =>
+              handleStyleChange("gridTemplateColumns", value)
+            }
+            placeholder="repeat(3, 1fr)"
           />
-          <Controller
-            name="gridTemplateRows"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Grid Template Rows"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="auto"
-              />
-            )}
+          <StyleInput
+            label="Grid Template Rows"
+            value={currentStyles.gridTemplateRows}
+            onChange={(value) => handleStyleChange("gridTemplateRows", value)}
+            placeholder="auto"
           />
         </StyleCategory>
 
@@ -648,138 +743,78 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.spacing}
           onToggle={() => toggleCategory("spacing")}
         >
-          <Controller
-            name="margin"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Margin"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "rem", "em", "auto"]}
-                placeholder="0"
-              />
-            )}
+          <UnitInput
+            label="Margin"
+            value={currentStyles.margin}
+            onChange={(value) => handleStyleChange("margin", value)}
+            units={["px", "rem", "em", "auto"]}
+            placeholder="0"
           />
           <div className="grid grid-cols-2 gap-2">
-            <Controller
-              name="marginTop"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Margin Top"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em", "auto"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Margin Top"
+              value={currentStyles.marginTop}
+              onChange={(value) => handleStyleChange("marginTop", value)}
+              units={["px", "rem", "em", "auto"]}
+              placeholder="0"
             />
-            <Controller
-              name="marginRight"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Margin Right"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em", "auto"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Margin Right"
+              value={currentStyles.marginRight}
+              onChange={(value) => handleStyleChange("marginRight", value)}
+              units={["px", "rem", "em", "auto"]}
+              placeholder="0"
             />
-            <Controller
-              name="marginBottom"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Margin Bottom"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em", "auto"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Margin Bottom"
+              value={currentStyles.marginBottom}
+              onChange={(value) => handleStyleChange("marginBottom", value)}
+              units={["px", "rem", "em", "auto"]}
+              placeholder="0"
             />
-            <Controller
-              name="marginLeft"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Margin Left"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em", "auto"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Margin Left"
+              value={currentStyles.marginLeft}
+              onChange={(value) => handleStyleChange("marginLeft", value)}
+              units={["px", "rem", "em", "auto"]}
+              placeholder="0"
             />
           </div>
-          <Controller
-            name="padding"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Padding"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "rem", "em"]}
-                placeholder="0"
-              />
-            )}
+          <UnitInput
+            label="Padding"
+            value={currentStyles.padding}
+            onChange={(value) => handleStyleChange("padding", value)}
+            units={["px", "rem", "em"]}
+            placeholder="0"
           />
           <div className="grid grid-cols-2 gap-2">
-            <Controller
-              name="paddingTop"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Padding Top"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Padding Top"
+              value={currentStyles.paddingTop}
+              onChange={(value) => handleStyleChange("paddingTop", value)}
+              units={["px", "rem", "em"]}
+              placeholder="0"
             />
-            <Controller
-              name="paddingRight"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Padding Right"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Padding Right"
+              value={currentStyles.paddingRight}
+              onChange={(value) => handleStyleChange("paddingRight", value)}
+              units={["px", "rem", "em"]}
+              placeholder="0"
             />
-            <Controller
-              name="paddingBottom"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Padding Bottom"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Padding Bottom"
+              value={currentStyles.paddingBottom}
+              onChange={(value) => handleStyleChange("paddingBottom", value)}
+              units={["px", "rem", "em"]}
+              placeholder="0"
             />
-            <Controller
-              name="paddingLeft"
-              control={control}
-              render={({ field }) => (
-                <UnitInput
-                  label="Padding Left"
-                  value={field.value}
-                  onChange={field.onChange}
-                  units={["px", "rem", "em"]}
-                  placeholder="0"
-                />
-              )}
+            <UnitInput
+              label="Padding Left"
+              value={currentStyles.paddingLeft}
+              onChange={(value) => handleStyleChange("paddingLeft", value)}
+              units={["px", "rem", "em"]}
+              placeholder="0"
             />
           </div>
         </StyleCategory>
@@ -790,88 +825,46 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.typography}
           onToggle={() => toggleCategory("typography")}
         >
-          <Controller
-            name="fontFamily"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Font Family"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="inherit"
-              />
-            )}
+          <StyleInput
+            label="Font Family"
+            value={currentStyles.fontFamily}
+            onChange={(value) => handleStyleChange("fontFamily", value)}
+            placeholder="inherit"
           />
-          <Controller
-            name="fontSize"
-            control={control}
-            render={({ field }) => (
-              <FontSizeSlider
-                label="Font Size"
-                value={(field.value as string) || "16px"}
-                onChange={field.onChange}
-              />
-            )}
+          <FontSizeSlider
+            label="Font Size"
+            value={(currentStyles.fontSize as string) || "16px"}
+            onChange={(value) => handleStyleChange("fontSize", value)}
           />
-          <Controller
-            name="fontWeight"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Font Weight"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="400"
-              />
-            )}
+          <StyleInput
+            label="Font Weight"
+            value={currentStyles.fontWeight}
+            onChange={(value) => handleStyleChange("fontWeight", value)}
+            placeholder="400"
           />
-          <Controller
-            name="lineHeight"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Line Height"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="1.5"
-              />
-            )}
+          <StyleInput
+            label="Line Height"
+            value={currentStyles.lineHeight}
+            onChange={(value) => handleStyleChange("lineHeight", value)}
+            placeholder="1.5"
           />
-          <Controller
-            name="textAlign"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Text Align"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="left"
-              />
-            )}
+          <StyleInput
+            label="Text Align"
+            value={currentStyles.textAlign}
+            onChange={(value) => handleStyleChange("textAlign", value)}
+            placeholder="left"
           />
-          <Controller
-            name="textDecoration"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Text Decoration"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="none"
-              />
-            )}
+          <StyleInput
+            label="Text Decoration"
+            value={currentStyles.textDecoration}
+            onChange={(value) => handleStyleChange("textDecoration", value)}
+            placeholder="none"
           />
-          <Controller
-            name="letterSpacing"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Letter Spacing"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="normal"
-              />
-            )}
+          <StyleInput
+            label="Letter Spacing"
+            value={currentStyles.letterSpacing}
+            onChange={(value) => handleStyleChange("letterSpacing", value)}
+            placeholder="normal"
           />
         </StyleCategory>
 
@@ -881,39 +874,21 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.colors}
           onToggle={() => toggleCategory("colors")}
         >
-          <Controller
-            name="color"
-            control={control}
-            render={({ field }) => (
-              <ColorPicker
-                label="Color"
-                value={(field.value as string) || "#000000"}
-                onChange={field.onChange}
-              />
-            )}
+          <ColorPicker
+            label="Color"
+            value={(currentStyles.color as string) || "#000000"}
+            onChange={(value) => handleStyleChange("color", value)}
           />
-          <Controller
-            name="backgroundColor"
-            control={control}
-            render={({ field }) => (
-              <ColorPicker
-                label="Background Color"
-                value={(field.value as string) || "transparent"}
-                onChange={field.onChange}
-              />
-            )}
+          <ColorPicker
+            label="Background Color"
+            value={(currentStyles.backgroundColor as string) || "transparent"}
+            onChange={(value) => handleStyleChange("backgroundColor", value)}
           />
-          <Controller
-            name="opacity"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Opacity"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="1"
-              />
-            )}
+          <StyleInput
+            label="Opacity"
+            value={currentStyles.opacity}
+            onChange={(value) => handleStyleChange("opacity", value)}
+            placeholder="1"
           />
         </StyleCategory>
 
@@ -923,65 +898,35 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.border}
           onToggle={() => toggleCategory("border")}
         >
-          <Controller
-            name="border"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Border"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="1px solid #000"
-              />
-            )}
+          <StyleInput
+            label="Border"
+            value={currentStyles.border}
+            onChange={(value) => handleStyleChange("border", value)}
+            placeholder="1px solid #000"
           />
-          <Controller
-            name="borderWidth"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Border Width"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="1px"
-              />
-            )}
+          <StyleInput
+            label="Border Width"
+            value={currentStyles.borderWidth}
+            onChange={(value) => handleStyleChange("borderWidth", value)}
+            placeholder="1px"
           />
-          <Controller
-            name="borderStyle"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Border Style"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="solid"
-              />
-            )}
+          <StyleInput
+            label="Border Style"
+            value={currentStyles.borderStyle}
+            onChange={(value) => handleStyleChange("borderStyle", value)}
+            placeholder="solid"
           />
-          <Controller
-            name="borderColor"
-            control={control}
-            render={({ field }) => (
-              <ColorPicker
-                label="Border Color"
-                value={(field.value as string) || "#000000"}
-                onChange={field.onChange}
-              />
-            )}
+          <ColorPicker
+            label="Border Color"
+            value={(currentStyles.borderColor as string) || "#000000"}
+            onChange={(value) => handleStyleChange("borderColor", value)}
           />
-          <Controller
-            name="borderRadius"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Border Radius"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "rem", "em", "%"]}
-                placeholder="0"
-              />
-            )}
+          <UnitInput
+            label="Border Radius"
+            value={currentStyles.borderRadius}
+            onChange={(value) => handleStyleChange("borderRadius", value)}
+            units={["px", "rem", "em", "%"]}
+            placeholder="0"
           />
         </StyleCategory>
 
@@ -991,83 +936,47 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.size}
           onToggle={() => toggleCategory("size")}
         >
-          <Controller
-            name="width"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Width"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "%", "rem", "em", "vw", "auto"]}
-                placeholder="auto"
-              />
-            )}
+          <UnitInput
+            label="Width"
+            value={currentStyles.width}
+            onChange={(value) => handleStyleChange("width", value)}
+            units={["px", "%", "rem", "em", "vw", "auto"]}
+            placeholder="auto"
           />
-          <Controller
-            name="height"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Height"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "%", "rem", "em", "vh", "auto"]}
-                placeholder="auto"
-              />
-            )}
+          <UnitInput
+            label="Height"
+            value={currentStyles.height}
+            onChange={(value) => handleStyleChange("height", value)}
+            units={["px", "%", "rem", "em", "vh", "auto"]}
+            placeholder="auto"
           />
-          <Controller
-            name="minWidth"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Min Width"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "%", "rem", "em", "vw"]}
-                placeholder="0"
-              />
-            )}
+          <UnitInput
+            label="Min Width"
+            value={currentStyles.minWidth}
+            onChange={(value) => handleStyleChange("minWidth", value)}
+            units={["px", "%", "rem", "em", "vw"]}
+            placeholder="0"
           />
-          <Controller
-            name="minHeight"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Min Height"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "%", "rem", "em", "vh"]}
-                placeholder="0"
-              />
-            )}
+          <UnitInput
+            label="Min Height"
+            value={currentStyles.minHeight}
+            onChange={(value) => handleStyleChange("minHeight", value)}
+            units={["px", "%", "rem", "em", "vh"]}
+            placeholder="0"
           />
-          <Controller
-            name="maxWidth"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Max Width"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "%", "rem", "em", "vw", "none"]}
-                placeholder="none"
-              />
-            )}
+          <UnitInput
+            label="Max Width"
+            value={currentStyles.maxWidth}
+            onChange={(value) => handleStyleChange("maxWidth", value)}
+            units={["px", "%", "rem", "em", "vw", "none"]}
+            placeholder="none"
           />
-          <Controller
-            name="maxHeight"
-            control={control}
-            render={({ field }) => (
-              <UnitInput
-                label="Max Height"
-                value={field.value}
-                onChange={field.onChange}
-                units={["px", "%", "rem", "em", "vh", "none"]}
-                placeholder="none"
-              />
-            )}
+          <UnitInput
+            label="Max Height"
+            value={currentStyles.maxHeight}
+            onChange={(value) => handleStyleChange("maxHeight", value)}
+            units={["px", "%", "rem", "em", "vh", "none"]}
+            placeholder="none"
           />
         </StyleCategory>
 
@@ -1077,29 +986,17 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.shadow}
           onToggle={() => toggleCategory("shadow")}
         >
-          <Controller
-            name="boxShadow"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Box Shadow"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="0 2px 4px rgba(0,0,0,0.1)"
-              />
-            )}
+          <StyleInput
+            label="Box Shadow"
+            value={currentStyles.boxShadow}
+            onChange={(value) => handleStyleChange("boxShadow", value)}
+            placeholder="0 2px 4px rgba(0,0,0,0.1)"
           />
-          <Controller
-            name="textShadow"
-            control={control}
-            render={({ field }) => (
-              <StyleInput
-                label="Text Shadow"
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="0 1px 2px rgba(0,0,0,0.1)"
-              />
-            )}
+          <StyleInput
+            label="Text Shadow"
+            value={currentStyles.textShadow}
+            onChange={(value) => handleStyleChange("textShadow", value)}
+            placeholder="0 1px 2px rgba(0,0,0,0.1)"
           />
         </StyleCategory>
       </div>
@@ -1159,7 +1056,6 @@ interface StyleInputProps {
 }
 
 function StyleInput({ label, value, onChange, placeholder }: StyleInputProps) {
-  // number를 string으로 변환
   const stringValue = value !== undefined ? String(value) : "";
 
   return (
@@ -1193,7 +1089,6 @@ function StyleSelect({
   options,
   placeholder,
 }: StyleSelectProps) {
-  // number를 string으로 변환
   const stringValue = value !== undefined ? String(value) : "";
 
   return (

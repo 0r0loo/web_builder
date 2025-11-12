@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as pagesApi from "@/lib/api/pages";
 import { generateId } from "@/lib/utils/id";
 
@@ -54,7 +54,7 @@ export function useCreatePage() {
         },
       });
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       // 해당 프로젝트의 페이지 목록 갱신
       queryClient.invalidateQueries({
         queryKey: ["pages", variables.projectId],
@@ -83,7 +83,7 @@ export function useUpdatePage() {
         metadata: any;
       }>;
     }) => pagesApi.updatePage(id, updates),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       // 해당 페이지 캐시 갱신
       queryClient.invalidateQueries({ queryKey: ["page", variables.id] });
       // 프로젝트 캐시도 갱신 (페이지 목록 포함)

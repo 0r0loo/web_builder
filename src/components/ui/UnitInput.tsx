@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { cn } from "@/lib/utils/cn";
 
 interface UnitInputProps {
-  value: string | number | undefined;
+  value: string | number | undefined | unknown;
   onChange: (value: string) => void;
   label?: string;
   className?: string;
@@ -41,7 +41,9 @@ export function UnitInput({
     }
 
     // 숫자 + 단위 파싱
-    const match = stringValue.match(/^(-?\d+(?:\.\d+)?)(px|%|rem|em|vw|vh|auto)?$/);
+    const match = stringValue.match(
+      /^(-?\d+(?:\.\d+)?)(px|%|rem|em|vw|vh|auto)?$/,
+    );
     if (match) {
       return {
         numValue: match[1],

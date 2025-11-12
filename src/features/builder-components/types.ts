@@ -1,5 +1,5 @@
-import type { ComponentNode, ComponentType } from "@/types/component";
 import type { LucideIcon } from "lucide-react";
+import type { ComponentNode, ComponentType } from "@/types/component";
 
 /**
  * 컴포넌트 카테고리

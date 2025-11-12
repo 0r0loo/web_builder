@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { cn } from "@/lib/utils/cn";
 import "./ColorPicker.css";
@@ -72,8 +72,12 @@ export function ColorPicker({
   const displayValue = value || "#000000";
 
   return (
-    <div className={cn("relative flex flex-col gap-1", className)} ref={pickerRef}>
+    <div
+      className={cn("relative flex flex-col gap-1", className)}
+      ref={pickerRef}
+    >
       {label && (
+        // biome-ignore lint/a11y/noLabelWithoutControl: Label is properly associated with the color input below
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
           {label}
         </label>

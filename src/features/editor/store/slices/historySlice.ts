@@ -20,7 +20,7 @@ export const createHistorySlice: StateCreator<
   [],
   [],
   HistorySlice
-> = (set, get) => ({
+> = (set, _get) => ({
   history: [],
   historyIndex: -1,
   canUndo: false,

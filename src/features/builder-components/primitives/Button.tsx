@@ -1,6 +1,7 @@
+import { MousePointerClick } from "lucide-react";
+import type { Action } from "@/types/action";
 import type { ComponentNode } from "@/types/component";
 import type { ComponentMetadata } from "../types";
-import { MousePointerClick } from "lucide-react";
 
 /**
  * Button 컴포넌트 메타데이터
@@ -15,6 +16,7 @@ export const buttonMetadata: ComponentMetadata = {
   defaultProps: {
     text: "버튼",
     variant: "primary", // primary | secondary | outline
+    action: { type: "none" }, // 기본 액션: 없음
   },
   defaultStyles: {
     desktop: {
@@ -41,10 +43,70 @@ interface ButtonProps {
   node: ComponentNode;
   mergedStyles: React.CSSProperties;
   children?: React.ReactNode;
+  isEditorMode?: boolean;
+  onPageChange?: (pageId: string) => void;
 }
 
-export function Button({ node, mergedStyles }: ButtonProps) {
-  const { text = "버튼", variant = "primary" } = node.props;
+export function Button({
+  node,
+  mergedStyles,
+  isEditorMode = false,
+  onPageChange,
+}: ButtonProps) {
+  const { text = "버튼", variant = "primary", action } = node.props;
+
+  // Action 처리 함수
+  const handleClick = (e: React.MouseEvent) => {
+    const buttonAction = action as Action | undefined;
+
+    console.log("🔘 Button clicked!", {
+      isEditorMode,
+      action: buttonAction,
+      text,
+    });
+
+    if (!buttonAction || buttonAction.type === "none") {
+      console.log("⚠️ No action configured");
+      // 에디터 모드에서는 버튼 선택을 위해 이벤트를 막지 않음
+      return;
+    }
+
+    if (buttonAction.type === "link") {
+      if (buttonAction.linkType === "internal" && buttonAction.pageId) {
+        // 에디터 모드에서는 페이지 전환 콜백 호출
+        if (isEditorMode && onPageChange) {
+          e.preventDefault();
+          e.stopPropagation(); // 컴포넌트 선택 방지
+          onPageChange(buttonAction.pageId);
+          console.log("✅ Editor mode: Page changed to", buttonAction.pageId);
+          return;
+        }
+
+        // 프리뷰 모드에서는 실제 페이지 이동
+        window.location.href = `/preview/${buttonAction.pageId}`;
+      } else if (buttonAction.linkType === "external" && buttonAction.href) {
+        // 에디터 모드에서는 외부 URL 이동 방지
+        if (isEditorMode) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log(
+            "⚠️ Editor mode: External link prevented",
+            buttonAction.href,
+          );
+          return;
+        }
+
+        // 프리뷰 모드에서는 외부 URL 이동
+        if (buttonAction.target === "_blank") {
+          window.open(buttonAction.href, "_blank", "noopener,noreferrer");
+        } else {
+          window.location.href = buttonAction.href;
+        }
+      }
+    }
+
+    // Phase 2+: modal, api, custom 처리 추가 예정
+  };
 
   // Variant별 스타일 매핑
   const variantStyles: Record<string, React.CSSProperties> = {
@@ -114,7 +176,12 @@ export function Button({ node, mergedStyles }: ButtonProps) {
   };
 
   return (
-    <button type="button" style={buttonStyle} data-variant={variant}>
+    <button
+      type="button"
+      style={buttonStyle}
+      data-variant={variant}
+      onClick={handleClick}
+    >
       {text}
     </button>
   );

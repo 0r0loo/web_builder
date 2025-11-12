@@ -1,11 +1,11 @@
-import type { ComponentNode } from "@/types/component";
-import type { Breakpoint } from "@/types/editor";
 import type { CSSProperties } from "react";
-import { Text } from "@/features/builder-components/primitives/Text";
 import { Button } from "@/features/builder-components/primitives/Button";
 import { Container } from "@/features/builder-components/primitives/Container";
 import { Image } from "@/features/builder-components/primitives/Image";
 import { Link } from "@/features/builder-components/primitives/Link";
+import { Text } from "@/features/builder-components/primitives/Text";
+import type { ComponentNode } from "@/types/component";
+import type { Breakpoint } from "@/types/editor";
 
 /**
  * 컴포넌트 타입별 렌더 컴포넌트 맵
@@ -17,6 +17,7 @@ const componentMap: Partial<
       node: ComponentNode;
       mergedStyles: CSSProperties;
       children?: React.ReactNode;
+      isEditorMode?: boolean;
     }>
   >
 > = {
@@ -128,7 +129,7 @@ function PureNodeRenderer({ node, breakpoint }: PureNodeRendererProps) {
 
   return (
     <div style={wrapperStyles} data-component-type={node.type}>
-      <Component node={node} mergedStyles={styles}>
+      <Component node={node} mergedStyles={styles} isEditorMode={false}>
         {children}
       </Component>
     </div>

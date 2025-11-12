@@ -1,7 +1,7 @@
 import type { StateCreator } from "zustand";
+import { generateId } from "@/lib/utils/id";
 import type { EditorStore } from "@/types/editor";
 import type { Page } from "@/types/page";
-import { generateId } from "@/lib/utils/id";
 
 /**
  * 페이지 관리 슬라이스

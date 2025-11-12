@@ -1,9 +1,9 @@
+import type { ComponentType } from "@/types/component";
 import type {
+  ComponentCategory,
   ComponentMetadata,
   ComponentRegistry,
-  ComponentCategory,
 } from "./types";
-import type { ComponentType } from "@/types/component";
 
 /**
  * 전역 컴포넌트 레지스트리

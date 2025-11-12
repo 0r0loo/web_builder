@@ -1,4 +1,4 @@
-import type { Project, NewProject, Page, NewPage } from "@/lib/db/schema";
+import type { NewProject, Page, Project } from "@/lib/db/schema";
 
 /**
  * Projects API Client

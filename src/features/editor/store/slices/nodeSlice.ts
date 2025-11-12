@@ -1,7 +1,7 @@
 import type { StateCreator } from "zustand";
-import type { EditorStore } from "@/types/editor";
+import { duplicateNodeWithNewIds, findNodeById } from "@/lib/utils/tree";
 import type { ComponentNode } from "@/types/component";
-import { findNodeById, duplicateNodeWithNewIds } from "@/lib/utils/tree";
+import type { EditorStore } from "@/types/editor";
 
 /**
  * 노드 관리 슬라이스

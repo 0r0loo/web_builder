@@ -2,9 +2,10 @@ import type { Breakpoint, ComponentNode } from "./component";
 import type { Page } from "./page";
 
 /**
- * Breakpoint re-export
+ * Breakpoint and Page re-export
  */
 export type { Breakpoint } from "./component";
+export type { Page } from "./page";
 
 /**
  * 에디터 모드

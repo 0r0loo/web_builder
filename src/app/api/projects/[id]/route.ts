@@ -1,14 +1,14 @@
-import { db } from "@/lib/db";
-import { projects, pages } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { pages, projects } from "@/lib/db/schema";
 
 /**
  * GET /api/projects/[id]
  * 특정 프로젝트 조회 (페이지 포함)
  */
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -83,7 +83,7 @@ export async function PUT(
  * 프로젝트 삭제 (cascade로 페이지도 자동 삭제)
  */
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

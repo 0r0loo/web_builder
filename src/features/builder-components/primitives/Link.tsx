@@ -1,7 +1,7 @@
-import type { ComponentNode } from "@/types/component";
-import type { ComponentMetadata } from "../types";
 import { Link as LinkIcon } from "lucide-react";
 import NextLink from "next/link";
+import type { ComponentNode } from "@/types/component";
+import type { ComponentMetadata } from "../types";
 
 /**
  * Link 컴포넌트 메타데이터
@@ -38,9 +38,10 @@ interface LinkProps {
   node: ComponentNode;
   mergedStyles: React.CSSProperties;
   children?: React.ReactNode;
+  isEditorMode?: boolean;
 }
 
-export function Link({ node, mergedStyles }: LinkProps) {
+export function Link({ node, mergedStyles, isEditorMode = false }: LinkProps) {
   const {
     text = "링크",
     pageId = "",
@@ -84,7 +85,23 @@ export function Link({ node, mergedStyles }: LinkProps) {
     ...linkStyles,
   };
 
-  // 내부 페이지 링크 (pageId가 있으면)
+  // 에디터 모드에서는 클릭 방지 (선택은 가능하도록 stopPropagation 안 함)
+  const handleClick = (e: React.MouseEvent) => {
+    if (isEditorMode) {
+      e.preventDefault();
+    }
+  };
+
+  // 에디터 모드에서는 일반 span으로 렌더링
+  if (isEditorMode) {
+    return (
+      <span style={finalStyle} onClick={handleClick}>
+        {text}
+      </span>
+    );
+  }
+
+  // 프리뷰 모드: 내부 페이지 링크 (pageId가 있으면)
   if (pageId) {
     return (
       <NextLink href={`/preview/${pageId}`} target={target as string}>
@@ -93,7 +110,7 @@ export function Link({ node, mergedStyles }: LinkProps) {
     );
   }
 
-  // 외부 URL 링크 (href가 있으면)
+  // 프리뷰 모드: 외부 URL 링크 (href가 있으면)
   if (href) {
     return (
       <a

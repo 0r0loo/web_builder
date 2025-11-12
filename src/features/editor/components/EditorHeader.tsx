@@ -1,17 +1,17 @@
 "use client";
 
-import { useEditorStore } from "../store/editorStore";
 import {
-  Monitor,
-  Tablet,
-  Smartphone,
-  Undo2,
-  Redo2,
   Download,
+  Monitor,
+  Redo2,
+  Smartphone,
+  Tablet,
+  Undo2,
   Upload,
 } from "lucide-react";
-import { cn } from "@/lib/utils/cn";
 import { Button, IconButton } from "@/components/ui/buttons";
+import { cn } from "@/lib/utils/cn";
+import { useEditorStore } from "../store/editorStore";
 import { PageTabs } from "./PageTabs";
 
 /**

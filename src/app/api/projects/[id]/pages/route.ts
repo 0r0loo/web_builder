@@ -1,15 +1,15 @@
+import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { pages } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { NextResponse } from "next/server";
 
 /**
  * GET /api/projects/[id]/pages
  * 프로젝트의 모든 페이지 조회
  */
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

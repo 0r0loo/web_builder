@@ -1,8 +1,8 @@
 "use client";
 
-import { useEditorStore } from "../store/editorStore";
-import { cn } from "@/lib/utils/cn";
 import { PageRenderer } from "@/features/renderer/PageRenderer";
+import { cn } from "@/lib/utils/cn";
+import { useEditorStore } from "../store/editorStore";
 
 /**
  * 에디터 캔버스

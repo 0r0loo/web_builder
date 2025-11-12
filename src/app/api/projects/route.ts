@@ -1,8 +1,7 @@
 import { nanoid } from "nanoid";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { NextResponse } from "next/server";
 
 /**
  * GET /api/projects

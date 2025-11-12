@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as projectsApi from "@/lib/api/projects";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as pagesApi from "@/lib/api/pages";
+import * as projectsApi from "@/lib/api/projects";
 import { generateId } from "@/lib/utils/id";
 
 /**
@@ -78,7 +78,7 @@ export function useUpdateProject() {
         settings: any;
       }>;
     }) => projectsApi.updateProject(id, updates),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       // 해당 프로젝트 캐시 갱신
       queryClient.invalidateQueries({ queryKey: ["project", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });

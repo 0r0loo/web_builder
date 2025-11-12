@@ -1,9 +1,13 @@
-import postgres from "postgres";
 import * as dotenv from "dotenv";
+import postgres from "postgres";
 
 dotenv.config({ path: ".env.local" });
 
-const sql = postgres(process.env.DATABASE_URL!);
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is not defined in environment variables");
+}
+
+const sql = postgres(process.env.DATABASE_URL);
 
 async function checkDatabase() {
   console.log("🔍 Railway DB 연결 확인 중...\n");

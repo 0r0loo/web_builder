@@ -4,18 +4,18 @@ import { useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import * as ContextMenu from "@radix-ui/react-context-menu";
-import type { ComponentNode } from "@/types/component";
-import type { Breakpoint } from "@/types/editor";
-import { getComponent } from "@/features/builder-components/registry";
-import { Text } from "@/features/builder-components/primitives/Text";
+import { Copy, Trash2 } from "lucide-react";
+import type { CSSProperties } from "react";
 import { Button } from "@/features/builder-components/primitives/Button";
 import { Container } from "@/features/builder-components/primitives/Container";
 import { Image } from "@/features/builder-components/primitives/Image";
 import { Link } from "@/features/builder-components/primitives/Link";
-import { cn } from "@/lib/utils/cn";
+import { Text } from "@/features/builder-components/primitives/Text";
+import { getComponent } from "@/features/builder-components/registry";
 import { useEditorStore } from "@/features/editor/store/editorStore";
-import type { CSSProperties } from "react";
-import { Copy, Trash2, MoveUp, MoveDown } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
+import type { ComponentNode } from "@/types/component";
+import type { Breakpoint } from "@/types/editor";
 
 /**
  * 컴포넌트 타입별 렌더 컴포넌트 맵
@@ -27,6 +27,7 @@ const componentMap: Partial<
       node: ComponentNode;
       mergedStyles: CSSProperties;
       children?: React.ReactNode;
+      isEditorMode?: boolean;
     }>
   >
 > = {
@@ -82,6 +83,7 @@ export function ComponentRenderer({
   const selectNode = useEditorStore((state) => state.selectNode);
   const deleteNode = useEditorStore((state) => state.deleteNode);
   const duplicateNode = useEditorStore((state) => state.duplicateNode);
+  const setCurrentPage = useEditorStore((state) => state.setCurrentPage);
   const isSelected = selectedNodeId === node.id;
 
   // Container인 경우 droppable 설정
@@ -227,6 +229,8 @@ export function ComponentRenderer({
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger asChild>
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: This is a drag & drop editor component with complex interactions */}
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: Drag & drop functionality is primarily mouse-based */}
         <div
           ref={setNodeRef}
           onClick={handleClick}
@@ -251,7 +255,12 @@ export function ComponentRenderer({
           data-component-type={node.type}
           {...(isSelected ? { ...attributes, ...listeners } : {})}
         >
-          <Component node={node} mergedStyles={styles}>
+          <Component
+            node={node}
+            mergedStyles={styles}
+            isEditorMode={true}
+            {...(node.type === "button" && { onPageChange: setCurrentPage })}
+          >
             {children}
           </Component>
         </div>

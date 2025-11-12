@@ -1,14 +1,14 @@
-import { db } from "@/lib/db";
-import { pages } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { pages } from "@/lib/db/schema";
 
 /**
  * GET /api/pages/[id]
  * 특정 페이지 조회
  */
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -74,7 +74,7 @@ export async function PUT(
  * 페이지 삭제
  */
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

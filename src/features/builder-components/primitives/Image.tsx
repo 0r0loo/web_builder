@@ -1,6 +1,6 @@
+import { ImageIcon } from "lucide-react";
 import type { ComponentNode } from "@/types/component";
 import type { ComponentMetadata } from "../types";
-import { ImageIcon } from "lucide-react";
 
 /**
  * Image 컴포넌트 메타데이터
@@ -49,24 +49,24 @@ export function Image({ node, mergedStyles }: ImageProps) {
     width: "100%",
     height: "auto",
     borderRadius: "8px",
-    objectFit: objectFit as any,
+    objectFit: objectFit as React.CSSProperties["objectFit"],
     display: "block",
   };
 
   // mergedStyles에서 wrapper가 담당할 레이아웃 속성 제외
   const {
-    display,
-    position,
-    top,
-    left,
-    right,
-    bottom,
-    margin,
-    marginTop,
-    marginBottom,
-    marginLeft,
-    marginRight,
-    zIndex,
+    display: _display,
+    position: _position,
+    top: _top,
+    left: _left,
+    right: _right,
+    bottom: _bottom,
+    margin: _margin,
+    marginTop: _marginTop,
+    marginBottom: _marginBottom,
+    marginLeft: _marginLeft,
+    marginRight: _marginRight,
+    zIndex: _zIndex,
     ...imageStyles
   } = mergedStyles;
 
@@ -77,6 +77,7 @@ export function Image({ node, mergedStyles }: ImageProps) {
   };
 
   return (
+    // biome-ignore lint/performance/noImgElement: This is a web builder component that needs to use native img tags
     <img
       src={src as string}
       alt={alt as string}

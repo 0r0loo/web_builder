@@ -1,21 +1,19 @@
-import { useState } from "react";
 import {
-  DndContext,
   type DragEndEvent,
-  type DragStartEvent,
   type DragOverEvent,
+  type DragStartEvent,
+  KeyboardSensor,
   MouseSensor,
   TouchSensor,
-  KeyboardSensor,
+  type UniqueIdentifier,
   useSensor,
   useSensors,
-  type UniqueIdentifier,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
-import { useEditorStore } from "../store/editorStore";
-import { generateId } from "@/lib/utils/id";
+import { useState } from "react";
 import { getComponent } from "@/features/builder-components/registry";
+import { generateId } from "@/lib/utils/id";
 import type { ComponentNode } from "@/types/component";
+import { useEditorStore } from "../store/editorStore";
 
 /**
  * 드래그 앤 드롭 훅

@@ -1,6 +1,6 @@
+import { Type } from "lucide-react";
 import type { ComponentNode } from "@/types/component";
 import type { ComponentMetadata } from "../types";
-import { Type } from "lucide-react";
 
 /**
  * Text 컴포넌트 메타데이터

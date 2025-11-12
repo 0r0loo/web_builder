@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useEditorStore } from "../store/editorStore";
 import { getComponent } from "@/features/builder-components/registry";
-import type { ComponentNode } from "@/types/component";
 import { cn } from "@/lib/utils/cn";
+import type { ComponentNode } from "@/types/component";
+import { useEditorStore } from "../store/editorStore";
 
 /**
  * 레이어 패널
@@ -141,7 +141,7 @@ function LayerItem({ node, depth }: LayerItemProps) {
         {/* 자식 개수 */}
         {hasChildren && (
           <span className="text-xs text-zinc-500 dark:text-zinc-400">
-            {node.children!.length}
+            {node.children?.length}
           </span>
         )}
       </button>
@@ -149,7 +149,7 @@ function LayerItem({ node, depth }: LayerItemProps) {
       {/* 자식 노드 재귀 렌더링 */}
       {hasChildren && isExpanded && (
         <div className="space-y-0.5">
-          {node.children!.map((child) => (
+          {node.children?.map((child) => (
             <LayerItem key={child.id} node={child} depth={depth + 1} />
           ))}
         </div>

@@ -1,11 +1,11 @@
-import type { ComponentNode } from "@/types/component";
-import type { Page } from "@/types/page";
-import type { Breakpoint } from "@/types/editor";
-import { ComponentRenderer } from "./ComponentRenderer";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import type { ComponentNode } from "@/types/component";
+import type { Breakpoint } from "@/types/editor";
+import type { Page } from "@/types/page";
+import { ComponentRenderer } from "./ComponentRenderer";
 
 /**
  * 재귀적 노드 렌더러
