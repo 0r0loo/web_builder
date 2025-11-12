@@ -1,0 +1,38 @@
+/* react-colorful 커스텀 스타일 */
+
+.react-colorful {
+  width: 200px;
+  height: 150px;
+}
+
+.react-colorful__saturation {
+  border-radius: 8px 8px 0 0;
+}
+
+.react-colorful__last-control {
+  border-radius: 0 0 8px 8px;
+}
+
+.react-colorful__hue {
+  height: 16px;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+
+.react-colorful__saturation-pointer,
+.react-colorful__hue-pointer {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ffffff;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .react-colorful__saturation-pointer,
+  .react-colorful__hue-pointer {
+    border-color: #27272a;
+  }
+}
