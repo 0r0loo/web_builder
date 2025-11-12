@@ -360,6 +360,16 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
               { value: "baseline", label: "Baseline" },
             ]}
           />
+          <StyleSelect
+            label="Flex Wrap"
+            value={currentStyles.flexWrap || "wrap"}
+            onChange={(v) => handleStyleChange("flexWrap", v)}
+            options={[
+              { value: "wrap", label: "Wrap (줄바꿈)" },
+              { value: "nowrap", label: "No Wrap (한 줄 유지)" },
+              { value: "wrap-reverse", label: "Wrap Reverse (역순)" },
+            ]}
+          />
           <StyleInput
             label="Gap"
             value={currentStyles.gap}
