@@ -57,3 +57,18 @@ export type {
   UISlice,
   PersistenceSlice,
 };
+
+/**
+ * 자동 저장 설정
+ * 상태 변경 시 debounce된 자동 저장 실행
+ */
+let saveTimeout: NodeJS.Timeout | null = null;
+
+useEditorStore.subscribe((state) => {
+  // UI 상태 변경은 저장하지 않음
+  if (saveTimeout) clearTimeout(saveTimeout);
+
+  saveTimeout = setTimeout(() => {
+    state.saveToLocalStorage();
+  }, 500); // 500ms debounce
+});

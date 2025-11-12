@@ -69,6 +69,12 @@ export function EditorHeader() {
     input.click();
   };
 
+  // 프리뷰 열기
+  const handlePreview = () => {
+    if (!currentPage) return;
+    window.open(`/preview/${currentPage.id}`, "_blank");
+  };
+
   return (
     <header className="flex h-14 items-center justify-between border-b border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900">
       {/* 좌측: 페이지 이름 */}
@@ -146,7 +152,7 @@ export function EditorHeader() {
 
         <div className="ml-2 h-6 w-px bg-zinc-200 dark:bg-zinc-700" />
 
-        <Button variant="secondary" size="md">
+        <Button variant="secondary" size="md" onClick={handlePreview}>
           미리보기
         </Button>
         <Button variant="primary" size="md">
