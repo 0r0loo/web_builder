@@ -31,10 +31,11 @@ export const textMetadata: ComponentMetadata = {
  */
 interface TextProps {
   node: ComponentNode;
+  mergedStyles: React.CSSProperties;
   children?: React.ReactNode;
 }
 
-export function Text({ node }: TextProps) {
+export function Text({ node, mergedStyles }: TextProps) {
   const { content = "텍스트를 입력하세요" } = node.props;
 
   // 기본 스타일
@@ -42,41 +43,37 @@ export function Text({ node }: TextProps) {
     fontSize: "16px",
     lineHeight: "1.5",
     color: "#000000",
+    whiteSpace: "pre-wrap", // 줄바꿈 유지
   };
 
-  // node.styles에서 시각적 스타일만 추출 (레이아웃 제외)
-  const visualStyles: React.CSSProperties = {};
-  if (node.styles?.desktop) {
-    const {
-      // 레이아웃 속성 제외
-      display,
-      position,
-      top,
-      left,
-      right,
-      bottom,
-      margin,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      width,
-      height,
-      maxWidth,
-      minWidth,
-      maxHeight,
-      minHeight,
-      zIndex,
-      ...visual
-    } = node.styles.desktop;
-    Object.assign(visualStyles, visual);
-  }
+  // mergedStyles에서 wrapper가 담당할 레이아웃 속성 제외
+  const {
+    display,
+    position,
+    top,
+    left,
+    right,
+    bottom,
+    margin,
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    width,
+    height,
+    maxWidth,
+    minWidth,
+    maxHeight,
+    minHeight,
+    zIndex,
+    ...textStyles
+  } = mergedStyles;
 
   // 최종 스타일 병합
   const textStyle: React.CSSProperties = {
     ...baseStyle,
-    ...visualStyles,
+    ...textStyles,
   };
 
-  return <span style={textStyle}>{content}</span>;
+  return <div style={textStyle}>{content}</div>;
 }
