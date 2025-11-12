@@ -11,6 +11,7 @@ export interface PageSlice {
   currentPageId: string | null;
   createPage: (input: { name: string; slug?: string }) => void;
   deletePage: (pageId: string) => void;
+  updatePageName: (pageId: string, name: string) => void;
   setCurrentPage: (pageId: string) => void;
   getCurrentPage: () => Page | null;
 }
@@ -81,6 +82,30 @@ export const createPageSlice: StateCreator<EditorStore, [], [], PageSlice> = (
         currentPageId: newCurrentPageId,
       };
     });
+  },
+
+  /**
+   * 페이지 이름 변경
+   */
+  updatePageName: (pageId, name) => {
+    set((state) => ({
+      pages: state.pages.map((page) =>
+        page.id === pageId
+          ? {
+              ...page,
+              name,
+              slug: name.toLowerCase().replace(/\s+/g, "-"),
+              metadata: {
+                ...page.metadata,
+                title: name,
+              },
+              updatedAt: Date.now(),
+            }
+          : page,
+      ),
+    }));
+
+    get().saveToHistory();
   },
 
   /**

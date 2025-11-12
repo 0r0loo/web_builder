@@ -96,7 +96,7 @@ export function Link({ node, mergedStyles, isEditorMode = false }: LinkProps) {
   if (isEditorMode) {
     return (
       <span style={finalStyle} onClick={handleClick}>
-        {text}
+        {text as string}
       </span>
     );
   }
@@ -105,7 +105,7 @@ export function Link({ node, mergedStyles, isEditorMode = false }: LinkProps) {
   if (pageId) {
     return (
       <NextLink href={`/preview/${pageId}`} target={target as string}>
-        <span style={finalStyle}>{text}</span>
+        <span style={finalStyle}>{text as string}</span>
       </NextLink>
     );
   }
@@ -119,11 +119,11 @@ export function Link({ node, mergedStyles, isEditorMode = false }: LinkProps) {
         rel={target === "_blank" ? "noopener noreferrer" : undefined}
         style={finalStyle}
       >
-        {text}
+        {text as string}
       </a>
     );
   }
 
   // 아무것도 없으면 일반 텍스트
-  return <span style={finalStyle}>{text}</span>;
+  return <span style={finalStyle}>{text as string}</span>;
 }

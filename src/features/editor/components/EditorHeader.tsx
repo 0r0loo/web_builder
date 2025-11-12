@@ -27,6 +27,7 @@ export function EditorHeader() {
   const setCurrentPage = useEditorStore((state) => state.setCurrentPage);
   const createPage = useEditorStore((state) => state.createPage);
   const deletePage = useEditorStore((state) => state.deletePage);
+  const updatePageName = useEditorStore((state) => state.updatePageName);
   const currentPage = useEditorStore((state) => state.getCurrentPage());
   const currentBreakpoint = useEditorStore((state) => state.currentBreakpoint);
   const setBreakpoint = useEditorStore((state) => state.setBreakpoint);
@@ -97,6 +98,7 @@ export function EditorHeader() {
           onPageClick={setCurrentPage}
           onAddPage={handleAddPage}
           onDeletePage={deletePage}
+          onUpdatePageName={updatePageName}
         />
       )}
 

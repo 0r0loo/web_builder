@@ -149,21 +149,21 @@ export function Button({
 
   // mergedStyles에서 wrapper가 담당할 레이아웃 속성 제외
   const {
-    position,
-    top,
-    left,
-    right,
-    bottom,
-    margin,
-    marginTop,
-    marginBottom,
-    marginLeft,
-    marginRight,
-    zIndex,
+    position: _position,
+    top: _top,
+    left: _left,
+    right: _right,
+    bottom: _bottom,
+    margin: _margin,
+    marginTop: _marginTop,
+    marginBottom: _marginBottom,
+    marginLeft: _marginLeft,
+    marginRight: _marginRight,
+    zIndex: _zIndex,
     // variant가 제어하는 속성들은 제외 (variant를 덮어쓰지 않도록)
-    backgroundColor,
-    color,
-    border,
+    backgroundColor: _backgroundColor,
+    color: _color,
+    border: _border,
     ...buttonStyles
   } = mergedStyles;
 
@@ -182,7 +182,7 @@ export function Button({
       data-variant={variant}
       onClick={handleClick}
     >
-      {text}
+      {text as string}
     </button>
   );
 }

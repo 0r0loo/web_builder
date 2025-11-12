@@ -50,6 +50,7 @@ export interface EditorActions {
   // 페이지 관리 (로컬 상태)
   createPage: (input: { name: string; slug?: string }) => void;
   deletePage: (pageId: string) => void;
+  updatePageName: (pageId: string, name: string) => void;
   setCurrentPage: (pageId: string) => void;
   getCurrentPage: () => Page | null;
 

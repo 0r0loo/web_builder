@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/utils/cn";
 import type { Page } from "@/types/editor";
 
@@ -11,6 +11,7 @@ interface PageTabsProps {
   onPageClick: (pageId: string) => void;
   onAddPage: () => void;
   onDeletePage: (pageId: string) => void;
+  onUpdatePageName: (pageId: string, name: string) => void;
 }
 
 /**
@@ -23,8 +24,12 @@ export function PageTabs({
   onPageClick,
   onAddPage,
   onDeletePage,
+  onUpdatePageName,
 }: PageTabsProps) {
   const [hoveredPageId, setHoveredPageId] = useState<string | null>(null);
+  const [editingPageId, setEditingPageId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDeleteClick = (e: React.MouseEvent, pageId: string) => {
     e.stopPropagation();
@@ -47,6 +52,44 @@ export function PageTabs({
     onDeletePage(pageId);
   };
 
+  // 더블클릭으로 편집 모드 진입
+  const handleDoubleClick = (e: React.MouseEvent, page: Page) => {
+    e.stopPropagation();
+    setEditingPageId(page.id);
+    setEditingName(page.name);
+    // input에 자동 포커스를 위해 다음 프레임에서 실행
+    setTimeout(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }, 0);
+  };
+
+  // 이름 변경 저장
+  const handleSaveName = () => {
+    if (editingPageId && editingName.trim()) {
+      onUpdatePageName(editingPageId, editingName.trim());
+    }
+    setEditingPageId(null);
+    setEditingName("");
+  };
+
+  // 편집 취소
+  const handleCancelEdit = () => {
+    setEditingPageId(null);
+    setEditingName("");
+  };
+
+  // 키보드 이벤트 처리
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSaveName();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      handleCancelEdit();
+    }
+  };
+
   return (
     <div className="flex items-center gap-1 border-b border-zinc-200 bg-zinc-50 px-2 dark:border-zinc-700 dark:bg-zinc-800">
       {/* 페이지 탭들 */}
@@ -54,11 +97,13 @@ export function PageTabs({
         {pages.map((page) => {
           const isActive = page.id === currentPageId;
           const isHovered = hoveredPageId === page.id;
+          const isEditing = editingPageId === page.id;
 
           return (
             <div
               key={page.id}
-              onClick={() => onPageClick(page.id)}
+              onClick={() => !isEditing && onPageClick(page.id)}
+              onDoubleClick={(e) => handleDoubleClick(e, page)}
               onMouseEnter={() => setHoveredPageId(page.id)}
               onMouseLeave={() => setHoveredPageId(null)}
               className={cn(
@@ -71,11 +116,29 @@ export function PageTabs({
               {/* 페이지 아이콘 */}
               <span className="text-base">📄</span>
 
-              {/* 페이지 이름 */}
-              <span className="flex-1 truncate text-left">{page.name}</span>
+              {/* 페이지 이름 또는 편집 input */}
+              {isEditing ? (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={editingName}
+                  onChange={(e) => setEditingName(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onBlur={handleSaveName}
+                  className="flex-1 rounded border border-blue-500 bg-white px-1 py-0.5 text-sm text-zinc-900 outline-none dark:bg-zinc-800 dark:text-zinc-100"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <span
+                  className="flex-1 truncate text-left"
+                  title="더블클릭하여 이름 변경"
+                >
+                  {page.name}
+                </span>
+              )}
 
               {/* 삭제 버튼 */}
-              {(isHovered || isActive) && pages.length > 1 && (
+              {!isEditing && (isHovered || isActive) && pages.length > 1 && (
                 <button
                   type="button"
                   onClick={(e) => handleDeleteClick(e, page.id)}

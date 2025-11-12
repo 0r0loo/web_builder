@@ -48,24 +48,24 @@ export function Text({ node, mergedStyles }: TextProps) {
 
   // mergedStyles에서 wrapper가 담당할 레이아웃 속성 제외
   const {
-    display,
-    position,
-    top,
-    left,
-    right,
-    bottom,
-    margin,
-    marginTop,
-    marginBottom,
-    marginLeft,
-    marginRight,
-    width,
-    height,
-    maxWidth,
-    minWidth,
-    maxHeight,
-    minHeight,
-    zIndex,
+    display: _display,
+    position: _position,
+    top: _top,
+    left: _left,
+    right: _right,
+    bottom: _bottom,
+    margin: _margin,
+    marginTop: _marginTop,
+    marginBottom: _marginBottom,
+    marginLeft: _marginLeft,
+    marginRight: _marginRight,
+    width: _width,
+    height: _height,
+    maxWidth: _maxWidth,
+    minWidth: _minWidth,
+    maxHeight: _maxHeight,
+    minHeight: _minHeight,
+    zIndex: _zIndex,
     ...textStyles
   } = mergedStyles;
 
@@ -75,5 +75,5 @@ export function Text({ node, mergedStyles }: TextProps) {
     ...textStyles,
   };
 
-  return <div style={textStyle}>{content}</div>;
+  return <div style={textStyle}>{content as string}</div>;
 }
