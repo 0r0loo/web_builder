@@ -30,10 +30,11 @@ export const containerMetadata: ComponentMetadata = {
  */
 interface ContainerProps {
   node: ComponentNode;
+  mergedStyles: React.CSSProperties;
   children?: React.ReactNode;
 }
 
-export function Container({ node, children }: ContainerProps) {
+export function Container({ children }: ContainerProps) {
   // Container는 순수 레이아웃 컴포넌트
   // 모든 스타일은 ComponentRenderer의 wrapper에 적용되므로
   // 여기서는 children만 반환

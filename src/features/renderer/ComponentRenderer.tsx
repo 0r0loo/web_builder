@@ -24,6 +24,7 @@ const componentMap: Partial<
     ComponentNode["type"],
     React.ComponentType<{
       node: ComponentNode;
+      mergedStyles: CSSProperties;
       children?: React.ReactNode;
     }>
   >
@@ -248,7 +249,9 @@ export function ComponentRenderer({
           data-component-type={node.type}
           {...(isSelected ? { ...attributes, ...listeners } : {})}
         >
-          <Component node={node}>{children}</Component>
+          <Component node={node} mergedStyles={styles}>
+            {children}
+          </Component>
         </div>
       </ContextMenu.Trigger>
 

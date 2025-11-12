@@ -39,10 +39,11 @@ export const buttonMetadata: ComponentMetadata = {
  */
 interface ButtonProps {
   node: ComponentNode;
+  mergedStyles: React.CSSProperties;
   children?: React.ReactNode;
 }
 
-export function Button({ node }: ButtonProps) {
+export function Button({ node, mergedStyles }: ButtonProps) {
   const { text = "버튼", variant = "primary" } = node.props;
 
   // Variant별 스타일 매핑
@@ -84,36 +85,31 @@ export function Button({ node }: ButtonProps) {
     transition: "all 0.2s",
   };
 
-  // node.styles에서 스타일 추출
-  const nodeStyles: React.CSSProperties = {};
-  if (node.styles?.desktop) {
-    const {
-      // wrapper div가 담당할 레이아웃 속성만 제외
-      position,
-      top,
-      left,
-      right,
-      bottom,
-      margin,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      zIndex,
-      // variant가 제어하는 속성들은 제외 (variant를 덮어쓰지 않도록)
-      backgroundColor,
-      color,
-      border,
-      ...rest
-    } = node.styles.desktop;
-    Object.assign(nodeStyles, rest);
-  }
+  // mergedStyles에서 wrapper가 담당할 레이아웃 속성 제외
+  const {
+    position,
+    top,
+    left,
+    right,
+    bottom,
+    margin,
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    zIndex,
+    // variant가 제어하는 속성들은 제외 (variant를 덮어쓰지 않도록)
+    backgroundColor,
+    color,
+    border,
+    ...buttonStyles
+  } = mergedStyles;
 
-  // 최종 스타일: 기본 → node.styles → variant 순으로 병합
+  // 최종 스타일: 기본 → mergedStyles → variant 순으로 병합
   // variant를 마지막에 병합하여 항상 적용되도록
   const buttonStyle: React.CSSProperties = {
     ...baseStyle,
-    ...nodeStyles,
+    ...buttonStyles,
     ...variantStyles[variant as string],
   };
 

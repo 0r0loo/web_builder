@@ -33,10 +33,11 @@ export const imageMetadata: ComponentMetadata = {
  */
 interface ImageProps {
   node: ComponentNode;
+  mergedStyles: React.CSSProperties;
   children?: React.ReactNode;
 }
 
-export function Image({ node }: ImageProps) {
+export function Image({ node, mergedStyles }: ImageProps) {
   const {
     src = "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800",
     alt = "이미지 설명",
@@ -52,49 +53,35 @@ export function Image({ node }: ImageProps) {
     display: "block",
   };
 
-  // node.styles에서 시각적 스타일만 추출 (레이아웃 제외)
-  const visualStyles: React.CSSProperties = {};
-  if (node.styles?.desktop) {
-    const {
-      // 레이아웃 속성 제외
-      display,
-      position,
-      top,
-      left,
-      right,
-      bottom,
-      margin,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      zIndex,
-      ...visual
-    } = node.styles.desktop;
-    Object.assign(visualStyles, visual);
-  }
+  // mergedStyles에서 wrapper가 담당할 레이아웃 속성 제외
+  const {
+    display,
+    position,
+    top,
+    left,
+    right,
+    bottom,
+    margin,
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    zIndex,
+    ...imageStyles
+  } = mergedStyles;
 
   // 최종 스타일 병합
   const imageStyle: React.CSSProperties = {
     ...baseStyle,
-    ...visualStyles,
-  };
-
-  // wrapper div 스타일: 이미지를 감싸고 이벤트를 받을 수 있는 영역 생성
-  const wrapperStyle: React.CSSProperties = {
-    width: "100%",
-    height: "100%",
-    display: "block",
+    ...imageStyles,
   };
 
   return (
-    <div style={wrapperStyle}>
-      <img
-        src={src as string}
-        alt={alt as string}
-        style={imageStyle}
-        draggable={false}
-      />
-    </div>
+    <img
+      src={src as string}
+      alt={alt as string}
+      style={imageStyle}
+      draggable={false}
+    />
   );
 }
