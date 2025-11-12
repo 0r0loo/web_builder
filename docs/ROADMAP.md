@@ -238,6 +238,15 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 - [x] Container: layout (flex/grid는 스타일 편집에서 지원)
 - [x] Image: src, alt, objectFit (Phase 13에서 조기 구현)
 
+#### 6.4 스타일 편집 UX 개선 🎯 **진행 중**
+- [ ] Color Picker (HEX, RGB, HSL 지원)
+- [ ] 폰트 사이즈 슬라이더 (실시간 프리뷰)
+- [ ] Spacing 시각적 편집 (Box Model UI)
+- [ ] 단위 선택기 (px, %, rem, em, vw, vh)
+- [ ] 프리셋 컬러 팔레트
+- [ ] 그라디언트 편집기
+- [ ] 최근 사용한 값 히스토리
+
 **결과물**: 컴포넌트의 모든 속성과 스타일을 자유롭게 편집할 수 있음
 
 ---
@@ -344,7 +353,7 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 
 ---
 
-## Phase 10: 프리뷰 모드 (1-2일)
+## Phase 10: 프리뷰 모드 (1-2일) ✅ **완료**
 
 ### 목표
 편집 UI 없이 순수한 페이지를 미리 볼 수 있습니다.
@@ -352,14 +361,15 @@ function PageRenderer({ node }: { node: ComponentNode}) {
 ### 작업 항목
 
 #### 10.1 프리뷰 라우트
-- [ ] `app/(preview)/preview/[pageId]/page.tsx`
-- [ ] 에디터 UI 없이 페이지만 렌더링
-- [ ] 현재 페이지 데이터 로드 (localStorage or 서버)
+- [x] `app/(preview)/preview/[pageId]/page.tsx`
+- [x] 에디터 UI 없이 페이지만 렌더링
+- [x] 현재 페이지 데이터 로드 (localStorage)
+- [x] PureRenderer 구현 (DnD 없는 순수 렌더링)
 
 #### 10.2 프리뷰 토글
-- [ ] 툴바에 "프리뷰" 버튼
-- [ ] 새 탭으로 프리뷰 열기
-- [ ] 또는 에디터 내에서 모드 전환
+- [x] 툴바에 "프리뷰" 버튼
+- [x] 새 탭으로 프리뷰 열기
+- [x] 자동 저장 기능 (500ms debounce)
 
 **결과물**: 완성된 페이지를 미리 볼 수 있음
 

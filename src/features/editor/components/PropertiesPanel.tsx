@@ -7,6 +7,9 @@ import { getComponent } from "@/features/builder-components/registry";
 import { Monitor, Tablet, Smartphone, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/buttons";
 import { Input, Label, Textarea, Select } from "@/components/ui/forms";
+import { ColorPicker } from "@/components/ui/ColorPicker";
+import { FontSizeSlider } from "@/components/ui/FontSizeSlider";
+import { UnitInput } from "@/components/ui/UnitInput";
 
 /**
  * 속성 패널
@@ -370,11 +373,12 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
               { value: "wrap-reverse", label: "Wrap Reverse (역순)" },
             ]}
           />
-          <StyleInput
+          <UnitInput
             label="Gap"
             value={currentStyles.gap}
             onChange={(v) => handleStyleChange("gap", v)}
-            placeholder="16px"
+            units={["px", "rem", "em"]}
+            placeholder="16"
           />
           <StyleInput
             label="Grid Template Columns"
@@ -396,67 +400,77 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.spacing}
           onToggle={() => toggleCategory("spacing")}
         >
-          <StyleInput
+          <UnitInput
             label="Margin"
             value={currentStyles.margin}
             onChange={(v) => handleStyleChange("margin", v)}
+            units={["px", "rem", "em", "auto"]}
             placeholder="0"
           />
           <div className="grid grid-cols-2 gap-2">
-            <StyleInput
+            <UnitInput
               label="Margin Top"
               value={currentStyles.marginTop}
               onChange={(v) => handleStyleChange("marginTop", v)}
+              units={["px", "rem", "em", "auto"]}
               placeholder="0"
             />
-            <StyleInput
+            <UnitInput
               label="Margin Right"
               value={currentStyles.marginRight}
               onChange={(v) => handleStyleChange("marginRight", v)}
+              units={["px", "rem", "em", "auto"]}
               placeholder="0"
             />
-            <StyleInput
+            <UnitInput
               label="Margin Bottom"
               value={currentStyles.marginBottom}
               onChange={(v) => handleStyleChange("marginBottom", v)}
+              units={["px", "rem", "em", "auto"]}
               placeholder="0"
             />
-            <StyleInput
+            <UnitInput
               label="Margin Left"
               value={currentStyles.marginLeft}
               onChange={(v) => handleStyleChange("marginLeft", v)}
+              units={["px", "rem", "em", "auto"]}
               placeholder="0"
             />
           </div>
-          <StyleInput
+          <UnitInput
             label="Padding"
             value={currentStyles.padding}
             onChange={(v) => handleStyleChange("padding", v)}
+            units={["px", "rem", "em"]}
             placeholder="0"
           />
           <div className="grid grid-cols-2 gap-2">
-            <StyleInput
+            <UnitInput
               label="Padding Top"
               value={currentStyles.paddingTop}
               onChange={(v) => handleStyleChange("paddingTop", v)}
+              units={["px", "rem", "em"]}
               placeholder="0"
             />
-            <StyleInput
+            <UnitInput
               label="Padding Right"
               value={currentStyles.paddingRight}
               onChange={(v) => handleStyleChange("paddingRight", v)}
+              units={["px", "rem", "em"]}
               placeholder="0"
             />
-            <StyleInput
+            <UnitInput
               label="Padding Bottom"
               value={currentStyles.paddingBottom}
               onChange={(v) => handleStyleChange("paddingBottom", v)}
+              units={["px", "rem", "em"]}
               placeholder="0"
             />
-            <StyleInput
+            <UnitInput
               label="Padding Left"
               value={currentStyles.paddingLeft}
               onChange={(v) => handleStyleChange("paddingLeft", v)}
+              units={["px", "rem", "em"]}
               placeholder="0"
             />
           </div>
@@ -474,11 +488,10 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
             onChange={(v) => handleStyleChange("fontFamily", v)}
             placeholder="inherit"
           />
-          <StyleInput
+          <FontSizeSlider
             label="Font Size"
-            value={currentStyles.fontSize}
+            value={(currentStyles.fontSize as string) || "16px"}
             onChange={(v) => handleStyleChange("fontSize", v)}
-            placeholder="16px"
           />
           <StyleInput
             label="Font Weight"
@@ -518,17 +531,15 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.colors}
           onToggle={() => toggleCategory("colors")}
         >
-          <StyleInput
+          <ColorPicker
             label="Color"
-            value={currentStyles.color}
+            value={(currentStyles.color as string) || "#000000"}
             onChange={(v) => handleStyleChange("color", v)}
-            placeholder="#000000"
           />
-          <StyleInput
+          <ColorPicker
             label="Background Color"
-            value={currentStyles.backgroundColor}
+            value={(currentStyles.backgroundColor as string) || "transparent"}
             onChange={(v) => handleStyleChange("backgroundColor", v)}
-            placeholder="transparent"
           />
           <StyleInput
             label="Opacity"
@@ -562,16 +573,16 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
             onChange={(v) => handleStyleChange("borderStyle", v)}
             placeholder="solid"
           />
-          <StyleInput
+          <ColorPicker
             label="Border Color"
-            value={currentStyles.borderColor}
+            value={(currentStyles.borderColor as string) || "#000000"}
             onChange={(v) => handleStyleChange("borderColor", v)}
-            placeholder="#000000"
           />
-          <StyleInput
+          <UnitInput
             label="Border Radius"
             value={currentStyles.borderRadius}
             onChange={(v) => handleStyleChange("borderRadius", v)}
+            units={["px", "rem", "em", "%"]}
             placeholder="0"
           />
         </StyleCategory>
@@ -582,40 +593,46 @@ function StylesEditor({ node, updateNode }: StylesEditorProps) {
           isOpen={openCategories.size}
           onToggle={() => toggleCategory("size")}
         >
-          <StyleInput
+          <UnitInput
             label="Width"
             value={currentStyles.width}
             onChange={(v) => handleStyleChange("width", v)}
+            units={["px", "%", "rem", "em", "vw", "auto"]}
             placeholder="auto"
           />
-          <StyleInput
+          <UnitInput
             label="Height"
             value={currentStyles.height}
             onChange={(v) => handleStyleChange("height", v)}
+            units={["px", "%", "rem", "em", "vh", "auto"]}
             placeholder="auto"
           />
-          <StyleInput
+          <UnitInput
             label="Min Width"
             value={currentStyles.minWidth}
             onChange={(v) => handleStyleChange("minWidth", v)}
+            units={["px", "%", "rem", "em", "vw"]}
             placeholder="0"
           />
-          <StyleInput
+          <UnitInput
             label="Min Height"
             value={currentStyles.minHeight}
             onChange={(v) => handleStyleChange("minHeight", v)}
+            units={["px", "%", "rem", "em", "vh"]}
             placeholder="0"
           />
-          <StyleInput
+          <UnitInput
             label="Max Width"
             value={currentStyles.maxWidth}
             onChange={(v) => handleStyleChange("maxWidth", v)}
+            units={["px", "%", "rem", "em", "vw", "none"]}
             placeholder="none"
           />
-          <StyleInput
+          <UnitInput
             label="Max Height"
             value={currentStyles.maxHeight}
             onChange={(v) => handleStyleChange("maxHeight", v)}
+            units={["px", "%", "rem", "em", "vh", "none"]}
             placeholder="none"
           />
         </StyleCategory>
