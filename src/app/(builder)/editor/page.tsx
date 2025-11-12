@@ -70,88 +70,110 @@ export default function EditorPage() {
     if (!currentPageId) {
       createPage({ name: "홈페이지" });
 
-      // 페이지 생성 후 샘플 컴포넌트 추가
+      // 페이지 생성 후 샘플 랜딩 페이지 추가
       setTimeout(() => {
         const page = getCurrentPage();
         if (page && page.root.children?.length === 0) {
-          // 샘플 Container 추가
+          // Hero 섹션
           addNode(page.root.id, {
-            id: "sample-container-1",
+            id: "hero-section",
             type: "container",
             props: {},
             styles: {
               desktop: {
                 display: "flex",
                 flexDirection: "column",
-                gap: "24px",
-                padding: "48px",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "32px",
+                padding: "80px 48px",
                 backgroundColor: "#f9fafb",
-                borderRadius: "12px",
               },
               tablet: {
-                padding: "32px",
+                padding: "64px 32px",
+                gap: "24px",
               },
               mobile: {
-                padding: "24px",
-                gap: "16px",
+                padding: "48px 24px",
+                gap: "20px",
               },
             },
             children: [],
           });
 
-          // Container 내부에 Text 추가
-          addNode("sample-container-1", {
-            id: "sample-text-1",
+          addNode("hero-section", {
+            id: "hero-title",
             type: "text",
             props: {
-              content: "안녕하세요! 웹 빌더입니다 👋",
+              content: "아름다운 웹사이트를 만드는 가장 쉬운 방법",
             },
             styles: {
               desktop: {
-                fontSize: "32px",
-                fontWeight: "700",
+                fontSize: "56px",
+                fontWeight: "800",
                 color: "#111827",
-                marginBottom: "8px",
+                textAlign: "center",
+                lineHeight: "1.1",
+                maxWidth: "800px",
               },
               tablet: {
-                fontSize: "28px",
+                fontSize: "42px",
               },
               mobile: {
-                fontSize: "24px",
+                fontSize: "32px",
               },
             },
           });
 
-          // Container 내부에 또 다른 Text 추가
-          addNode("sample-container-1", {
-            id: "sample-text-2",
+          addNode("hero-section", {
+            id: "hero-description",
             type: "text",
             props: {
               content:
-                "좌측 사이드바에서 컴포넌트를 드래그하여 페이지를 만들어보세요.",
+                "코딩 없이 드래그 앤 드롭만으로 전문가 수준의 웹사이트를 만들어보세요. 디자인부터 배포까지, 모든 것이 한 곳에서.",
             },
             styles: {
               desktop: {
-                fontSize: "18px",
+                fontSize: "20px",
                 color: "#6b7280",
+                textAlign: "center",
                 lineHeight: "1.6",
-                marginBottom: "24px",
+                maxWidth: "600px",
               },
               tablet: {
-                fontSize: "16px",
+                fontSize: "18px",
               },
               mobile: {
-                fontSize: "14px",
+                fontSize: "16px",
               },
             },
           });
 
-          // Container 내부에 Button 추가
-          addNode("sample-container-1", {
-            id: "sample-button-1",
+          // Hero 버튼 컨테이너
+          addNode("hero-section", {
+            id: "hero-buttons",
+            type: "container",
+            props: {},
+            styles: {
+              desktop: {
+                display: "flex",
+                flexDirection: "row",
+                gap: "16px",
+                alignItems: "center",
+              },
+              mobile: {
+                flexDirection: "column",
+                width: "100%",
+              },
+            },
+            children: [],
+          });
+
+          addNode("hero-buttons", {
+            id: "hero-cta-primary",
             type: "button",
             props: {
-              text: "시작하기",
+              text: "무료로 시작하기",
               variant: "primary",
             },
             styles: {
@@ -160,18 +182,358 @@ export default function EditorPage() {
                 fontSize: "16px",
                 fontWeight: "600",
                 borderRadius: "8px",
-                border: "none",
-                cursor: "pointer",
                 backgroundColor: "#3b82f6",
                 color: "#ffffff",
-                transition: "all 0.2s",
-              },
-              tablet: {
-                padding: "14px 28px",
+                border: "none",
+                cursor: "pointer",
               },
               mobile: {
-                padding: "12px 24px",
-                fontSize: "14px",
+                width: "100%",
+              },
+            },
+          });
+
+          addNode("hero-buttons", {
+            id: "hero-cta-secondary",
+            type: "button",
+            props: {
+              text: "데모 보기",
+              variant: "outline",
+            },
+            styles: {
+              desktop: {
+                padding: "16px 32px",
+                fontSize: "16px",
+                fontWeight: "600",
+                borderRadius: "8px",
+                backgroundColor: "transparent",
+                color: "#3b82f6",
+                border: "2px solid #3b82f6",
+                cursor: "pointer",
+              },
+              mobile: {
+                width: "100%",
+              },
+            },
+          });
+
+          // Features 섹션
+          addNode(page.root.id, {
+            id: "features-section",
+            type: "container",
+            props: {},
+            styles: {
+              desktop: {
+                display: "flex",
+                flexDirection: "column",
+                gap: "48px",
+                padding: "80px 48px",
+                backgroundColor: "#ffffff",
+              },
+              tablet: {
+                padding: "64px 32px",
+              },
+              mobile: {
+                padding: "48px 24px",
+                gap: "32px",
+              },
+            },
+            children: [],
+          });
+
+          addNode("features-section", {
+            id: "features-title",
+            type: "text",
+            props: {
+              content: "강력한 기능들",
+            },
+            styles: {
+              desktop: {
+                fontSize: "42px",
+                fontWeight: "700",
+                color: "#111827",
+                textAlign: "center",
+              },
+              tablet: {
+                fontSize: "36px",
+              },
+              mobile: {
+                fontSize: "28px",
+              },
+            },
+          });
+
+          // Features 그리드
+          addNode("features-section", {
+            id: "features-grid",
+            type: "container",
+            props: {},
+            styles: {
+              desktop: {
+                display: "flex",
+                flexDirection: "row",
+                gap: "24px",
+                justifyContent: "center",
+              },
+              tablet: {
+                flexDirection: "column",
+              },
+              mobile: {
+                flexDirection: "column",
+              },
+            },
+            children: [],
+          });
+
+          // Feature 1
+          addNode("features-grid", {
+            id: "feature-1",
+            type: "container",
+            props: {},
+            styles: {
+              desktop: {
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px",
+                padding: "32px",
+                backgroundColor: "#f9fafb",
+                borderRadius: "12px",
+                width: "300px",
+              },
+              tablet: {
+                width: "100%",
+              },
+              mobile: {
+                width: "100%",
+                padding: "24px",
+              },
+            },
+            children: [],
+          });
+
+          addNode("feature-1", {
+            id: "feature-1-title",
+            type: "text",
+            props: {
+              content: "🎨 직관적인 디자인",
+            },
+            styles: {
+              desktop: {
+                fontSize: "24px",
+                fontWeight: "700",
+                color: "#111827",
+              },
+            },
+          });
+
+          addNode("feature-1", {
+            id: "feature-1-desc",
+            type: "text",
+            props: {
+              content:
+                "드래그 앤 드롭으로 누구나 쉽게 아름다운 웹사이트를 만들 수 있습니다.",
+            },
+            styles: {
+              desktop: {
+                fontSize: "16px",
+                color: "#6b7280",
+                lineHeight: "1.6",
+              },
+            },
+          });
+
+          // Feature 2
+          addNode("features-grid", {
+            id: "feature-2",
+            type: "container",
+            props: {},
+            styles: {
+              desktop: {
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px",
+                padding: "32px",
+                backgroundColor: "#f9fafb",
+                borderRadius: "12px",
+                width: "300px",
+              },
+              tablet: {
+                width: "100%",
+              },
+              mobile: {
+                width: "100%",
+                padding: "24px",
+              },
+            },
+            children: [],
+          });
+
+          addNode("feature-2", {
+            id: "feature-2-title",
+            type: "text",
+            props: {
+              content: "⚡ 빠른 속도",
+            },
+            styles: {
+              desktop: {
+                fontSize: "24px",
+                fontWeight: "700",
+                color: "#111827",
+              },
+            },
+          });
+
+          addNode("feature-2", {
+            id: "feature-2-desc",
+            type: "text",
+            props: {
+              content:
+                "최적화된 코드로 빠른 로딩 속도와 뛰어난 성능을 제공합니다.",
+            },
+            styles: {
+              desktop: {
+                fontSize: "16px",
+                color: "#6b7280",
+                lineHeight: "1.6",
+              },
+            },
+          });
+
+          // Feature 3
+          addNode("features-grid", {
+            id: "feature-3",
+            type: "container",
+            props: {},
+            styles: {
+              desktop: {
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px",
+                padding: "32px",
+                backgroundColor: "#f9fafb",
+                borderRadius: "12px",
+                width: "300px",
+              },
+              tablet: {
+                width: "100%",
+              },
+              mobile: {
+                width: "100%",
+                padding: "24px",
+              },
+            },
+            children: [],
+          });
+
+          addNode("feature-3", {
+            id: "feature-3-title",
+            type: "text",
+            props: {
+              content: "📱 반응형 디자인",
+            },
+            styles: {
+              desktop: {
+                fontSize: "24px",
+                fontWeight: "700",
+                color: "#111827",
+              },
+            },
+          });
+
+          addNode("feature-3", {
+            id: "feature-3-desc",
+            type: "text",
+            props: {
+              content:
+                "모든 기기에서 완벽하게 보이는 반응형 웹사이트를 자동으로 생성합니다.",
+            },
+            styles: {
+              desktop: {
+                fontSize: "16px",
+                color: "#6b7280",
+                lineHeight: "1.6",
+              },
+            },
+          });
+
+          // CTA 섹션
+          addNode(page.root.id, {
+            id: "cta-section",
+            type: "container",
+            props: {},
+            styles: {
+              desktop: {
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "24px",
+                padding: "80px 48px",
+                backgroundColor: "#3b82f6",
+              },
+              tablet: {
+                padding: "64px 32px",
+              },
+              mobile: {
+                padding: "48px 24px",
+              },
+            },
+            children: [],
+          });
+
+          addNode("cta-section", {
+            id: "cta-title",
+            type: "text",
+            props: {
+              content: "지금 바로 시작해보세요",
+            },
+            styles: {
+              desktop: {
+                fontSize: "42px",
+                fontWeight: "700",
+                color: "#ffffff",
+                textAlign: "center",
+              },
+              tablet: {
+                fontSize: "36px",
+              },
+              mobile: {
+                fontSize: "28px",
+              },
+            },
+          });
+
+          addNode("cta-section", {
+            id: "cta-description",
+            type: "text",
+            props: {
+              content: "신용카드 없이 무료로 시작할 수 있습니다",
+            },
+            styles: {
+              desktop: {
+                fontSize: "18px",
+                color: "#e0e7ff",
+                textAlign: "center",
+              },
+            },
+          });
+
+          addNode("cta-section", {
+            id: "cta-button",
+            type: "button",
+            props: {
+              text: "무료로 시작하기 →",
+              variant: "primary",
+            },
+            styles: {
+              desktop: {
+                padding: "16px 32px",
+                fontSize: "16px",
+                fontWeight: "600",
+                borderRadius: "8px",
+                backgroundColor: "#ffffff",
+                color: "#3b82f6",
+                border: "none",
+                cursor: "pointer",
               },
             },
           });
